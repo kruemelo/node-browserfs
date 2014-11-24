@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "AMD module providing a node fs-like browser in-memory file system ",
   "main": "browserfs.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kruemelo/node-browserfs.git"
+  },
   "directories": {
     "test": "test"
   },
