@@ -40,3 +40,7 @@ Test
 ```
 $ mocha
 ```
+
+License
+-------
+[WTFPL](http://www.wtfpl.net/)
