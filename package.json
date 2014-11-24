@@ -1,0 +1,23 @@
+{
+  "name": "node-browserfs",
+  "version": "1.0.0",
+  "description": "AMD module providing a node fs-like browser in-memory file system ",
+  "main": "browserfs.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "mocha": "^2.0.1",
+    "requirejs": "^2.1.15"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "node",
+    "fs",
+    "browser"
+  ],
+  "author": "kruemelo",
+  "license": "WTFPL"
+}
