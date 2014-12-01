@@ -12,6 +12,7 @@ http://nodejs.org/api/fs.html
 + + [mkdirp](https://www.npmjs.org/package/mkdirp)
 + + [join([path1], [path2], [...])](http://nodejs.org/api/path.html#path_path_join_path1_path2)
 + + parse(path) -> [path1, path2, ...]
++ + fileSizeSI / fileSizeIEC -> 34.30 kB / 33.50 KiB
 
 Use
 ---
@@ -39,6 +40,12 @@ fs.readdirSync('/', function (err, files) {
   ...
 });
 ```
+
+Have a look at the examples folder.
+
+Open index.html in browser, drop the github timeout png, click on the filename to download..)
+
+Read the code.
 
 Test
 ----
