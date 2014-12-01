@@ -43,9 +43,9 @@ fs.readdirSync('/', function (err, files) {
 });
 ```
 
-Have a look at the examples folder.
+Have a look at the example folder.
 
-Open index.html in browser, drop the github timeout png, click on the filename to download..)
+Open index.html in browser, drop the github timeout png, click on the filename to download..
 
 Read the code.
 
