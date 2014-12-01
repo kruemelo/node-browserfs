@@ -31,11 +31,13 @@ fs.writeFileSync('/file', buffer);
 
 
 fs.stat('/file', function (err, stats) {
-  // human readable file size: SI: kB,MB,GB,TB,PB,EB,ZB,YB / IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
+  // human readable file size:
+  // SI: kB,MB,GB,TB,PB,EB,ZB,YB / IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
   console.log(fs.fileSizeSI(stats.size), fs.fileSizeIEC(stats.size));
 });
 
-// async example Asynchronous readdir(3) [see node js fs api](http://nodejs.org/api/fs.html#fs_fs_readdir_path_callback)
+// async example Asynchronous readdir(3)
+// see node js fs api http://nodejs.org/api/fs.html#fs_fs_readdir_path_callback
 fs.readdirSync('/', function (err, files) {
   ...
 });
