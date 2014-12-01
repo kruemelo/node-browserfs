@@ -43,14 +43,13 @@
           var files = ev.dataTransfer.files;
           for (var i = 0; i < files.length; ++i) {
               (function (file) {
-              var reader = new FileReader();
-              reader.onload = function (evt) {
-                  fs.writeFile(file.name, evt.target.result, function (err, result) {
-                    appendFile(err || file.name);
-                  });
-              }
-              // reader.readAsDataURL(file);
-              reader.readAsArrayBuffer(file);
+                var reader = new FileReader();
+                reader.onload = function (evt) {
+                    fs.writeFile(file.name, evt.target.result, function (err, result) {
+                      appendFile(err || file.name);
+                    });
+                }
+                reader.readAsArrayBuffer(file);
               })(files[i]);
           }
         }
@@ -81,7 +80,6 @@
                 saveAs(new Blob([buffer]), filename);
               });
             }
-            return this;
         }
 
         requirejs.config({
