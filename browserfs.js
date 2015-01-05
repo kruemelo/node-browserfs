@@ -73,23 +73,26 @@ define('browserfs', function () {
         return path;
     };
 
-		// human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
-		BrowserFS.prototype.fileSizeSI = function (a,b,c,d,e){
-		 return (b=Math,c=b.log,d=1e3,e=c(a)/c(d)|0,a/b.pow(d,e)).toFixed(e?2:0)
-		 	+' '+(e?'kMGTPEZY'[--e]+'B':'Bytes');
-		};
+    // human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
+    BrowserFS.prototype.fileSizeSI = function (a, b, c, d, e){
+     return (b = Math, c= b.log, d = 1e3, e = c(a) / c(d) |0 , a/b.pow(d,e)).toFixed(e ? 2 : 0)
+     	+ ' ' + (e ? 'kMGTPEZY' [--e] + 'B' : 'Bytes');
+    };
 
 
-		// human readable file size IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
-		BrowserFS.prototype.fileSizeIEC = function (a,b,c,d,e){
-		 return (b=Math,c=b.log,d=1024,e=c(a)/c(d)|0,a/b.pow(d,e)).toFixed(e?2:0)
-		 	+' '+(e?'KMGTPEZY'[--e]+'iB':'Bytes');
-		};
+    // human readable file size IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
+    BrowserFS.prototype.fileSizeIEC = function (a, b, c, d, e){
+     return (b = Math, c = b.log, d=1024, e= c(a) / c(d) | 0, a/b.pow(d,e)).toFixed(e ? 2 : 0)
+     	+ ' ' + (e ? 'KMGTPEZY' [--e] + 'iB' : 'Bytes');
+    };
+
 
     BrowserFS.prototype.statSync = function (_path) {
+
         var path = this.parse(_path),
             node = find(path, this.root),
             isDir = isDirectory(node);
+
         if (!node || !node.data) {
             throw new Error('ENOENT');
         }
@@ -112,11 +115,14 @@ define('browserfs', function () {
         };
     };
 
+
     BrowserFS.prototype.existsSync = function (_path) {
+
         var path = this.parse(_path),
             i,
             to = path.length,
             node = this.root;
+
         for (i = 0; i < to; ++i) {
             if (!isDirectory(node)) {
                 return false;
@@ -126,10 +132,13 @@ define('browserfs', function () {
         return !!node;
     };
 
+
     BrowserFS.prototype.mkdirSync = function (_path) {
+
         var path = this.parse(_path),
             parentDir = find(path.slice(0, path.length - 1), this.root),
             time = Date.now();
+
         if (!path.length || !isDirectory(parentDir)) {
             throw new Error('ENODIR');
         }
@@ -142,12 +151,15 @@ define('browserfs', function () {
         parentDir.mtime = time;
     };
 
+
     BrowserFS.prototype.mkdirpSync = function (_path) {
+
         var path = this.parse(_path),
             pathLength = path.length,
             tmpPath,
             i,
             dir;
+
         if (!path.length) {
             throw new Error('ENODIR');
         }
@@ -163,9 +175,12 @@ define('browserfs', function () {
         }
     };
 
+
     BrowserFS.prototype.readdirSync = function (_path) {
+
         var path = this.parse(_path),
             dir = find(path, this.root);
+
         if (!isDirectory(dir)) {
             throw new Error('ENODIR');
         }
@@ -173,52 +188,68 @@ define('browserfs', function () {
         return Object.keys(dir.data);
     };
 
+
     BrowserFS.prototype.rmdirSync = function (_path) {
+
         var path = this.parse(_path),
             dir = find(path, this.root)
             dirname = path.pop(),
             parentDir = find(path, this.root);
-        // console.log(_path, path, dir, dirname, parentDir);
+
         if (!isDirectory(dir)) {
             throw new Error('ENODIR');
         }
+
         if (Object.keys(dir.data).length) {
             throw new Error('ENOTEMPTY');
         }
+
         delete parentDir.data[dirname];
+
         parentDir.mtime = Date.now();
     };
 
+
     BrowserFS.prototype.rmrfSync = function (_path) {
+
         var path = this.parse(_path),
             dirname = path.pop(),
             parentDir = find(path, this.root);
+
         if (!isDirectory(parentDir)) {
             throw new Error('ENODIR');
         }
+
         if (dirname) {
             delete parentDir.data[dirname];
         } else {
             parentDir.data = {}
         }
+
         parentDir.mtime = Date.now();
     };
 
+
     BrowserFS.prototype.writeFileSync = function (_path, content, options) {
+
         var path = this.parse(_path),
             filename = path.pop(),
             exists = this.existsSync(_path),
             parentDir = find(path, this.root),
             buffer, time;
+
         if (!isDirectory(parentDir)) {
             throw new Error('ENODIR');
         }
+
         if (!filename) {
             throw new Error('EINVALIDPATH');
         }
+
         options = options || {
             encoding: true
         };
+
         if ('string' === typeof content) {
             // convert into ArrayBuffer
             buffer = new ArrayBuffer(content.length * 2); // 2 bytes for each char
@@ -229,6 +260,7 @@ define('browserfs', function () {
         } else {
             buffer = content;
         }
+
         time = Date.now();
         parentDir.data[filename] = {
             data: buffer,
@@ -236,29 +268,71 @@ define('browserfs', function () {
             mtime: time,
             atime: time,
         };
+
         if (!exists) {
             parentDir.mtime = time;
         }
+
         parentDir.atime = time;
     };
+
 
     /**
      * If no encoding is specified, then the raw buffer is returned.
      **/
     BrowserFS.prototype.readFileSync = function (_path, options) {
+
         var path = this.parse(_path),
             file = find(path, this.root),
             options = options || {
                 encoding: false
             };
+
         if (!isFile(file)) {
             throw new Error('ENOENT');
         }
+
         file.atime = Date.now();
+
         return options.encoding ? String.fromCharCode.apply(null, new Uint16Array(file.data)) : file.data;
     };
 
-    // async functions
+
+    BrowserFS.prototype.renameSync = function (_oldPath, _newPath) {
+
+        var oldPath = this.parse(_oldPath),
+            oldNode = find(oldPath, this.root),
+            oldParentDir = find(oldPath.slice(0, oldPath.length - 1), this.root),
+            oldFilename = oldPath[oldPath.length - 1],
+            newPath = this.parse(_newPath),
+            newNode = find(newPath, this.root),
+            newParentDir = find(newPath.slice(0, newPath.length - 1), this.root),
+            newFilename = newPath[newPath.length - 1],
+            time = Date.now();
+
+        if (!oldPath.length || !newPath.length) {
+            throw new Error('ENOENT');
+        }
+
+        if (!isDirectory(oldParentDir || !isDirectory(newParentDir))) {
+            throw new Error('ENODIR');
+        }
+
+        if (newNode) {
+            throw new Error('EEXISTS');
+        }
+
+        // new location ref
+        newParentDir.data[newFilename] = newNode = oldNode;
+        newNode.ctime = time;
+        newParentDir.mtime = time;
+
+        // delete old ref
+        delete oldParentDir.data[oldFilename];
+        oldParentDir.mtime = time;
+    };
+
+    // async functions, one argument plus callback
     ['stat', 'exists', 'readdir', 'mkdirp', 'mkdir', 'rmdir', 'rmrf', 'unlink'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, callback) {
             try {
@@ -270,6 +344,7 @@ define('browserfs', function () {
         };
     });
 
+    // async functions, optional second argument plus callback
     ['writeFile', 'readFile'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, optArg, callback) {
             if (!callback) {
@@ -278,6 +353,18 @@ define('browserfs', function () {
             }
             try {
                 var result = this[fn + "Sync"](path, optArg);
+            } catch (e) {
+                return callback(e);
+            }
+            return callback(null, result);
+        };
+    });
+
+    // async functions, required second argument plus callback
+    ['rename'].forEach(function (fn) {
+        BrowserFS.prototype[fn] = function (arg1, arg2, callback) {
+            try {
+                var result = this[fn + "Sync"](arg1, arg2);
             } catch (e) {
                 return callback(e);
             }

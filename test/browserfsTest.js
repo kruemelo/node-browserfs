@@ -52,15 +52,16 @@ describe("paths (nix only)", function () {
 			[["a/b", " .. /c"], "a/c"]
 		].forEach(function (test) {
 			var result = fs.join.apply(fs, test[0]);
-			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));	
+			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
 		});
 
 	});
 
+
 	it('should parse paths', function () {
 
 		var fs = new BrowserFS();
-		
+
 		[
 			['', []],
 			['/', []],
@@ -72,15 +73,17 @@ describe("paths (nix only)", function () {
 			['/a/../..', []]
 		].forEach(function (test) {
 			var result = fs.parse(test[0]);
-			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));	
+			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
 		});
 
 	});
+
 
 });
 
 
 describe('stats', function () {
+
 
 	it('should have stats for root node', function () {
 
@@ -101,6 +104,7 @@ describe('stats', function () {
 
 	});
 
+
 	it('should throw error for non existing files', function () {
     assert.throws(
       function () {
@@ -113,13 +117,14 @@ describe('stats', function () {
         }
       },
       "unexpected error"
-    );  
+    );
 	});
 
 });
 
 
 describe('exists', function () {
+
 
 	it('should test for existing directory', function () {
 
@@ -134,7 +139,7 @@ describe('exists', function () {
 			assert(fs.existsSync('/subdir'));
 
 			fs.mkdirSync('/subdir/subdir2');
-			assert(fs.existsSync('/subdir/subdir2'));			
+			assert(fs.existsSync('/subdir/subdir2'));
 
 			assert(!fs.existsSync('/subdir/subdir2/not existing directory'));
 	});
@@ -144,12 +149,13 @@ describe('exists', function () {
 
 describe("directory", function () {
 
+
 	it("should have a empty root directory as startup", function (done) {
-		
+
 		var fs = new BrowserFS();
 
-		assert(fs.readdirSync('/'), []); 
-		
+		assert(fs.readdirSync('/'), []);
+
 		fs.readdir("/", function (err, files) {
 			if(err) throw err;
 			assert(files, []);
@@ -167,7 +173,7 @@ describe("directory", function () {
 		assert.deepEqual(fs.readdirSync('/'), ['subdir']);
 
 		fs.mkdirSync('/subdir2');
-		assert.deepEqual(fs.readdirSync('/'), ['subdir', 'subdir2']);		
+		assert.deepEqual(fs.readdirSync('/'), ['subdir', 'subdir2']);
 
 		fs.mkdirSync('/subdir2/subdir3');
 		assert.deepEqual(fs.readdirSync('/subdir2'), ['subdir3']);
@@ -182,7 +188,7 @@ describe("directory", function () {
         }
       },
       "unexpected error"
-    );  
+    );
 
 	});
 
@@ -205,9 +211,10 @@ describe("directory", function () {
         }
       },
       "unexpected error"
-    );  
+    );
 
 	});
+
 
 	it('should not remove a non-empty directory', function () {
 
@@ -224,8 +231,9 @@ describe("directory", function () {
         }
       },
       "unexpected error"
-    );  
+    );
 	});
+
 
 	it('should remove a directory', function () {
 
@@ -235,6 +243,7 @@ describe("directory", function () {
 		assert(!fs.existsSync('/subdir/subdir2'));
 
 	});
+
 
 	it('should remove a non-empty directory', function () {
 		var fs = new BrowserFS();
@@ -249,18 +258,61 @@ describe("directory", function () {
 		assert(fs.existsSync('/'));
 	});
 
+
+  it('should rename a directory', function (done) {
+
+    var fs = new BrowserFS(),
+      subdir1StatsBefore,
+      subdir1_1Stats,
+      subdir2StatsBefore;
+
+    fs.mkdirpSync('/subdir1/subdir1-1');
+    fs.mkdirSync('/subdir2');
+    fs.writeFileSync('/subdir1/subdir1-1/a_file.txt', 'file string content');
+
+    subdir1StatsBefore = fs.statSync('/subdir1');
+    subdir1_1Stats = fs.statSync('/subdir1/subdir1-1');
+    subdir2StatsBefore = fs.statSync('/subdir2');
+
+    // test: rename (/move) subdir1/subdir1-1 to subdir2/subdir2-1
+    setTimeout(function () {
+      fs.rename('/subdir1/subdir1-1', '/subdir2/subdir2-1', function (err) {
+
+        var subdir1StatsAfter, subdir2_1Stats, subdir2StatsAfter;
+
+        assert(!fs.existsSync('/subdir1/subdir1-1'), 'original directory should not exist');
+        assert(fs.existsSync('/subdir2/subdir2-1'), 'renamed directory should exist');
+        assert(fs.existsSync('/subdir2/subdir2-1/a_file.txt'), 'directory contents should exist')
+
+        subdir1StatsAfter = fs.statSync('/subdir1');
+        subdir2_1Stats = fs.statSync('/subdir2/subdir2-1');
+        subdir2StatsAfter = fs.statSync('/subdir2');
+
+        assert(subdir1StatsAfter.mtime > subdir1StatsBefore.mtime, 'old parent directory mtime should be greater than before');
+        assert(subdir2_1Stats.ctime > subdir1_1Stats.ctime, 'renamed directorie\'s stats ctime should be greater than before');
+        assert.equal(subdir2_1Stats.mtime.getTime(), subdir1_1Stats.mtime.getTime(), 'renamed directories stats mtime should be equal');
+        assert(subdir2StatsAfter.mtime > subdir2StatsBefore.mtime, 'new parent directory mtime should be greater than before');
+
+        done();
+      });
+    }, 1);
+
+  });
+
+
 });
 
 
 describe('files', function () {
 
+
 	it('should create a file', function () {
 
 		var fs = new BrowserFS();
 
-		assert(!fs.existsSync('/file'));	
+		assert(!fs.existsSync('/file'));
 		fs.writeFileSync('/file', '');
-		assert(fs.existsSync('/file'));	
+		assert(fs.existsSync('/file'));
 	});
 
 
@@ -268,26 +320,62 @@ describe('files', function () {
 		var fs = new BrowserFS();
 
 		fs.writeFileSync('/file', 'file string content');
-		assert(fs.existsSync('/file'));	
+		assert(fs.existsSync('/file'));
 	});
+
 
 	it('should read string from file', function () {
 
 		var fs = new BrowserFS();
 		fs.writeFileSync('/file', 'file string content');
-		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), 'file string content');	
+		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), 'file string content');
 
 	});
+
 
 	it('should write buffer to file', function () {
 
 		var fs = new BrowserFS(),
 		  testStr = 'file string content',
 			buffer = str2ab(testStr);
-			
+
 		fs.writeFileSync('/file', buffer);
-		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), testStr);	
+		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), testStr);
 
 	});
+
+
+  it('should rename a file', function (done) {
+
+    var fs = new BrowserFS(),
+      testStr = 'file string content',
+      oldStats, oldParentStats;
+
+    fs.writeFileSync('/original_filename', testStr);
+    oldStats = fs.statSync('/original_filename');
+    oldParentStats = fs.statSync('/');
+
+    setTimeout(function () {
+      fs.rename('/original_filename', '/renamed_filename', function (err) {
+
+        var newStats, newParentStats;
+
+        assert(!fs.existsSync('/original_filename'), 'original file should not exist');
+        assert(fs.existsSync('/renamed_filename'), 'renamed file should exist');
+        assert.equal(fs.readFileSync('/renamed_filename', {encoding: 'string'}), testStr, 'file content should be same as original file');
+
+        newStats = fs.statSync('/renamed_filename');
+        assert(newStats.isFile(), 'renamed file should be type of file');
+        assert(newStats.ctime > oldStats.ctime, 'new file stats ctime should be greater than old file stats ctime');
+
+        newParentStats = fs.statSync('/');
+        assert(newParentStats.mtime > oldParentStats.mtime);
+
+        done();
+      });
+    }, 1);
+
+  });
+
 
 });
