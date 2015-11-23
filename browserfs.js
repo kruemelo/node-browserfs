@@ -1,4 +1,18 @@
-define('browserfs', function () {
+(function(definition) {
+  if (typeof module !== 'undefined') {
+    // CommonJS
+    module.exports = definition();
+  }
+  else if (typeof define === 'function' && typeof define.amd === 'object') {
+    // AMD
+    define(['browserfs'], definition);
+  }
+  else if (typeof window === 'object') {
+    // DOM
+    window.browserfs = definition();
+  }
+}(function () {
+
     /* String.trim() Polyfill
 	Running the following code before any other code will create String.trim if it's not natively available.
 	*/
@@ -8,9 +22,10 @@ define('browserfs', function () {
             var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
             String.prototype.trim = function () {
                 return this.replace(rtrim, "");
-            }
+            };
         })();
     }
+
     var BrowserFS = function () {
         var time = Date.now();
         this.root = {
@@ -192,7 +207,7 @@ define('browserfs', function () {
     BrowserFS.prototype.rmdirSync = function (_path) {
 
         var path = this.parse(_path),
-            dir = find(path, this.root)
+            dir = find(path, this.root),
             dirname = path.pop(),
             parentDir = find(path, this.root);
 
@@ -223,7 +238,7 @@ define('browserfs', function () {
         if (dirname) {
             delete parentDir.data[dirname];
         } else {
-            parentDir.data = {}
+            parentDir.data = {};
         }
 
         parentDir.mtime = Date.now();
@@ -283,10 +298,12 @@ define('browserfs', function () {
     BrowserFS.prototype.readFileSync = function (_path, options) {
 
         var path = this.parse(_path),
-            file = find(path, this.root),
-            options = options || {
-                encoding: false
-            };
+            file = find(path, this.root);
+
+
+        options = options || {
+            encoding: false
+        };
 
         if (!isFile(file)) {
             throw new Error('ENOENT');
@@ -335,8 +352,9 @@ define('browserfs', function () {
     // async functions, one argument plus callback
     ['stat', 'exists', 'readdir', 'mkdirp', 'mkdir', 'rmdir', 'rmrf', 'unlink'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, callback) {
+            var result;
             try {
-                var result = this[fn + "Sync"](path);
+                result = this[fn + "Sync"](path);
             } catch (e) {
                 return callback(e);
             }
@@ -347,12 +365,13 @@ define('browserfs', function () {
     // async functions, optional second argument plus callback
     ['writeFile', 'readFile'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, optArg, callback) {
+            var result;
             if (!callback) {
                 callback = optArg;
                 optArg = undefined;
             }
             try {
-                var result = this[fn + "Sync"](path, optArg);
+                result = this[fn + "Sync"](path, optArg);
             } catch (e) {
                 return callback(e);
             }
@@ -363,8 +382,9 @@ define('browserfs', function () {
     // async functions, required second argument plus callback
     ['rename'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (arg1, arg2, callback) {
+            var result;
             try {
-                var result = this[fn + "Sync"](arg1, arg2);
+                result = this[fn + "Sync"](arg1, arg2);
             } catch (e) {
                 return callback(e);
             }
@@ -373,4 +393,5 @@ define('browserfs', function () {
     });
 
     return BrowserFS;
-});
+
+}));
