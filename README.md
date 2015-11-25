@@ -1,7 +1,7 @@
 node-browserfs
 ==============
 
-AMD module providing a node fs-like browser in-memory file system. Synchronous & async versions available for all functions.
+AMD/CommonJS module providing a node fs-like browser in-memory file system. Synchronous & async versions available for all functions.
 
 API
 ---
