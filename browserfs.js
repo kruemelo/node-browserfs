@@ -289,14 +289,21 @@
         }
 
         time = Date.now();
-        parentDir.data[filename] = {
-            data: buffer,
-            ctime: time,
-            mtime: time,
-            atime: time,
-        };
 
-        if (!exists) {
+        if (exists) {
+            // update file
+            parentDir.data[filename].data = buffer;
+            parentDir.data[filename].atime = time;
+            parentDir.data[filename].mtime = time;
+        }
+        else {
+            // create file
+            parentDir.data[filename] = {
+                data: buffer,
+                ctime: time,
+                mtime: time,
+                atime: time,
+            };
             parentDir.mtime = time;
         }
 
