@@ -11,7 +11,7 @@ http://nodejs.org/api/fs.html
   * + rmrf [rimraf](https://www.npmjs.org/package/rimraf)
   * + [mkdirp](https://www.npmjs.org/package/mkdirp)
   * + [join([path1], [path2], [...])](http://nodejs.org/api/path.html#path_path_join_path1_path2)
-  * + parse(path) -> [path1, path2, ...]
+  * + parsePath(path) -> [path1, path2, ...]
   * + fileSizeSI / fileSizeIEC -> 34.30 kB / 33.50 KiB
 
 Use
