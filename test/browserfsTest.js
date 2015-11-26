@@ -106,6 +106,33 @@ describe("paths (nix only)", function () {
       );
     });
 
+  }); // dirname
+
+  it('should return the basename name of a path', function () {
+
+    var fs = new BrowserFS();
+
+    assert.isFunction(fs.basename);
+
+    [
+      {path: '', basename: ''},
+      {path: '/', basename: ''},
+      {path: '/a', basename: 'a'},
+      {path: '/a/b', basename: 'b'},
+      {path: '/a/b/', basename: 'b'},
+      {path: '/a/b/c', basename: 'c'},
+      {path: '/a/b/../c', basename: 'c'},
+      {path: '/a/..', basename: ''},
+      {path: '/a/../..', basename: ''},
+      {path: 'a/b', basename: 'b'},
+    ].forEach(function (test) {
+      assert.strictEqual(
+        fs.basename(test.path),
+        test.basename,
+        util.format('basename for path: "%s"', test.path)
+      );
+    });
+
   });
 
 });

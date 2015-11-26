@@ -92,12 +92,17 @@
         return path;
     };
 
-   BrowserFS.prototype.dirname = function (path) {
+    BrowserFS.prototype.dirname = function (path) {
 
         var pathParts = this.parsePath(path);
 
         pathParts = pathParts.slice(0, pathParts.length - 1);
         return '/' + pathParts.join('/');
+    };    
+
+    BrowserFS.prototype.basename = function (filename) {
+        var pathParts = this.parsePath(filename);
+        return pathParts.length ? pathParts.pop() : '';
     };    
 
     // human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
