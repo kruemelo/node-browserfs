@@ -1,6 +1,8 @@
+// $ npm test
+// $ ./node_modules/.bin/mocha -w
 
 var path = require('path');
-var assert = require('assert');
+var assert = require('chai').assert;
 var util = require('util');
 var requirejs = require('requirejs');
 
@@ -25,10 +27,10 @@ function str2ab(str) {
   return buf;
 }
 
-function almostNow (testTime, expectedTime, abbr) {
+function assertTimeCloseTo (testTime, expectedTime, delta, message) {
   expectedTime = expectedTime || Date.now();
-  abbr = abbr || 500;
-  return testTime > expectedTime - abbr && testTime < expectedTime + abbr;
+  delta = delta || 500;
+  assert.closeTo(testTime, expectedTime, delta, message);
 }
 
 
@@ -51,7 +53,7 @@ describe("paths (nix only)", function () {
 			[["a/b", ". /c"], "a/b/c"],
 			[["a/b", " .. /c"], "a/c"]
 		].forEach(function (test) {
-			var result = fs.join.apply(fs, test[0]);
+			var result = fs.joinPath.apply(fs, test[0]);
 			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
 		});
 
@@ -72,12 +74,39 @@ describe("paths (nix only)", function () {
 			['/a/../', []],
 			['/a/../..', []]
 		].forEach(function (test) {
-			var result = fs.parse(test[0]);
+			var result = fs.parsePath(test[0]);
 			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
 		});
 
 	});
 
+
+	it('should return the directory name of a path', function () {
+
+		var fs = new BrowserFS();
+
+		assert.isFunction(fs.dirname);
+
+		[
+			{path: '', dirname: '/'},
+			{path: '/', dirname: '/'},
+			{path: '/a', dirname: '/'},
+			{path: '/a/b', dirname: '/a'},
+			{path: '/a/b/', dirname: '/a'},
+			{path: '/a/b/c', dirname: '/a/b'},
+			{path: '/a/b/../c', dirname: '/a'},
+			{path: '/a/..', dirname: '/'},
+			{path: '/a/../..', dirname: '/'},
+			{path: 'a/b', dirname: '/a'},
+		].forEach(function (test) {
+			assert.strictEqual(
+				fs.dirname(test.path),
+				test.dirname,
+				util.format('dirname for path: "%s"', test.path)
+			);
+		});
+
+	});
 
 });
 
@@ -96,28 +125,24 @@ describe('stats', function () {
 		assert.strictEqual(result.isCharacterDevice(), false);
 		assert.strictEqual(result.isSymbolicLink(), false);
 		assert.strictEqual(result.isFIFO(), false);
-		assert.strictEqual(result.isSocket(), false);
-		assert(almostNow(result.atime.getTime()));
-		assert(almostNow(result.mtime.getTime()));
-		assert(almostNow(result.ctime.getTime()));
+		assert.strictEqual(result.isSocket(), false);		
+		assertTimeCloseTo(result.atime.getTime());
+		assertTimeCloseTo(result.mtime.getTime());
+		assertTimeCloseTo(result.ctime.getTime());
 		assert.strictEqual(result.size, 0);
 
 	});
 
 
 	it('should throw error for non existing files', function () {
-    assert.throws(
-      function () {
-      	var fs = new BrowserFS;
-      	fs.statSync('/unknown/path');
-      },
-      function (err) {
-        if ((err instanceof Error) && /ENOENT/.test(err)) {
-          return true;
-        }
-      },
-      "unexpected error"
-    );
+	    assert.throw(
+	      function () {
+	      	var fs = new BrowserFS;
+	      	fs.statSync('/unknown/path');
+	      },
+	      Error,
+	      'ENOENT'
+	    );
 	});
 
 });
@@ -178,16 +203,12 @@ describe("directory", function () {
 		fs.mkdirSync('/subdir2/subdir3');
 		assert.deepEqual(fs.readdirSync('/subdir2'), ['subdir3']);
 
-    assert.throws(
+    assert.throw(
       function () {
       	fs.mkdirSync('/');
       },
-      function (err) {
-        if ((err instanceof Error) && /ENODIR/.test(err)) {
-          return true;
-        }
-      },
-      "unexpected error"
+      Error,
+      'ENODIR'
     );
 
 	});
@@ -201,16 +222,12 @@ describe("directory", function () {
 		assert.deepEqual(fs.readdirSync('/'), ['subdir']);
 		assert.deepEqual(fs.readdirSync('/subdir'), ['subdir2']);
 
-    assert.throws(
+    assert.throw(
       function () {
       	fs.mkdirpSync('/');
       },
-      function (err) {
-        if ((err instanceof Error) && /ENODIR/.test(err)) {
-          return true;
-        }
-      },
-      "unexpected error"
+      Error,
+      'ENODIR'
     );
 
 	});
@@ -221,16 +238,12 @@ describe("directory", function () {
 		var fs = new BrowserFS();
 		fs.mkdirpSync('/subdir/subdir2');
 
-    assert.throws(
+    assert.throw(
       function () {
       	fs.rmdirSync('/subdir');
       },
-      function (err) {
-        if ((err instanceof Error) && /ENOTEMPTY/.test(err)) {
-          return true;
-        }
-      },
-      "unexpected error"
+      Error,
+      'ENOTEMPTY'
     );
 	});
 

@@ -65,14 +65,14 @@
         return node;
     }
 
-    BrowserFS.prototype.join = function () {
+    BrowserFS.prototype.joinPath = function () {
         var path = [],
             parts = arguments || [];
-        path = this.parse(Array.prototype.slice.call(parts).join('/'));
+        path = this.parsePath(Array.prototype.slice.call(parts).join('/'));
         return ('/' === parts[0][0] ? '/' : '') + path.join('/');
     };
 
-    BrowserFS.prototype.parse = function (_path) {
+    BrowserFS.prototype.parsePath = function (_path) {
         var path = [];
         _path = _path || '/';
         _path.split(/\/+/).forEach(function (term) {
@@ -87,6 +87,14 @@
         });
         return path;
     };
+
+   BrowserFS.prototype.dirname = function (path) {
+
+        var pathParts = this.parsePath(path);
+
+        pathParts = pathParts.slice(0, pathParts.length - 1);
+        return '/' + pathParts.join('/');
+    };    
 
     // human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
     BrowserFS.prototype.fileSizeSI = function (a, b, c, d, e){
@@ -104,7 +112,7 @@
 
     BrowserFS.prototype.statSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             node = find(path, this.root),
             isDir = isDirectory(node);
 
@@ -133,7 +141,7 @@
 
     BrowserFS.prototype.existsSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             i,
             to = path.length,
             node = this.root;
@@ -150,7 +158,7 @@
 
     BrowserFS.prototype.mkdirSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             parentDir = find(path.slice(0, path.length - 1), this.root),
             time = Date.now();
 
@@ -169,7 +177,7 @@
 
     BrowserFS.prototype.mkdirpSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             pathLength = path.length,
             tmpPath,
             i,
@@ -193,7 +201,7 @@
 
     BrowserFS.prototype.readdirSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             dir = find(path, this.root);
 
         if (!isDirectory(dir)) {
@@ -206,7 +214,7 @@
 
     BrowserFS.prototype.rmdirSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             dir = find(path, this.root),
             dirname = path.pop(),
             parentDir = find(path, this.root);
@@ -227,7 +235,7 @@
 
     BrowserFS.prototype.rmrfSync = function (_path) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             dirname = path.pop(),
             parentDir = find(path, this.root);
 
@@ -247,7 +255,7 @@
 
     BrowserFS.prototype.writeFileSync = function (_path, content, options) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             filename = path.pop(),
             exists = this.existsSync(_path),
             parentDir = find(path, this.root),
@@ -297,7 +305,7 @@
      **/
     BrowserFS.prototype.readFileSync = function (_path, options) {
 
-        var path = this.parse(_path),
+        var path = this.parsePath(_path),
             file = find(path, this.root);
 
 
@@ -317,11 +325,11 @@
 
     BrowserFS.prototype.renameSync = function (_oldPath, _newPath) {
 
-        var oldPath = this.parse(_oldPath),
+        var oldPath = this.parsePath(_oldPath),
             oldNode = find(oldPath, this.root),
             oldParentDir = find(oldPath.slice(0, oldPath.length - 1), this.root),
             oldFilename = oldPath[oldPath.length - 1],
-            newPath = this.parse(_newPath),
+            newPath = this.parsePath(_newPath),
             newNode = find(newPath, this.root),
             newParentDir = find(newPath.slice(0, newPath.length - 1), this.root),
             newFilename = newPath[newPath.length - 1],
