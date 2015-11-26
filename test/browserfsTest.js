@@ -1,5 +1,5 @@
 // $ npm test
-// $ ./node_modules/.bin/mocha -w
+// $ mocha
 
 var path = require('path');
 var assert = require('chai').assert;
@@ -7,9 +7,9 @@ var util = require('util');
 var requirejs = require('requirejs');
 
 requirejs.config({
-	paths: {
-		'browserfs': path.join(__dirname, "../browserfs")
-	}
+  paths: {
+    'browserfs': path.join(__dirname, "../browserfs")
+  }
 });
 
 var BrowserFS = requirejs('browserfs');
@@ -36,77 +36,77 @@ function assertTimeCloseTo (testTime, expectedTime, delta, message) {
 
 describe("paths (nix only)", function () {
 
-	it("should join paths", function () {
+  it("should join paths", function () {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		[
-			[["/", "a/b/c"], "/a/b/c"],
-			[["/a", "b/ c"], "/a/b/c"],
-			[["/a/b", "c"], "/a/b/c"],
-			[["/a/", "b / c"], "/a/b/c"],
-			[["/a//", "b/c"], "/a/b/c"],
-			[["a", "b/c"], "a/b/c"],
-			[["a/b", "c"], "a/b/c"],
-			[["a/b", "./c"], "a/b/c"],
-			[["a/b", "../c"], "a/c"],
-			[["a/b", ". /c"], "a/b/c"],
-			[["a/b", " .. /c"], "a/c"]
-		].forEach(function (test) {
-			var result = fs.joinPath.apply(fs, test[0]);
-			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
-		});
+    [
+      [["/", "a/b/c"], "/a/b/c"],
+      [["/a", "b/ c"], "/a/b/c"],
+      [["/a/b", "c"], "/a/b/c"],
+      [["/a/", "b / c"], "/a/b/c"],
+      [["/a//", "b/c"], "/a/b/c"],
+      [["a", "b/c"], "a/b/c"],
+      [["a/b", "c"], "a/b/c"],
+      [["a/b", "./c"], "a/b/c"],
+      [["a/b", "../c"], "a/c"],
+      [["a/b", ". /c"], "a/b/c"],
+      [["a/b", " .. /c"], "a/c"]
+    ].forEach(function (test) {
+      var result = fs.joinPath.apply(fs, test[0]);
+      assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
+    });
 
-	});
-
-
-	it('should parse paths', function () {
-
-		var fs = new BrowserFS();
-
-		[
-			['', []],
-			['/', []],
-			['/a', ['a']],
-			['/a/', ['a']],
-			['/a/b', ['a', 'b']],
-			['/a/b/../c', ['a', 'c']],
-			['/a/../', []],
-			['/a/../..', []]
-		].forEach(function (test) {
-			var result = fs.parsePath(test[0]);
-			assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
-		});
-
-	});
+  });
 
 
-	it('should return the directory name of a path', function () {
+  it('should parse paths', function () {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		assert.isFunction(fs.dirname);
+    [
+      ['', []],
+      ['/', []],
+      ['/a', ['a']],
+      ['/a/', ['a']],
+      ['/a/b', ['a', 'b']],
+      ['/a/b/../c', ['a', 'c']],
+      ['/a/../', []],
+      ['/a/../..', []]
+    ].forEach(function (test) {
+      var result = fs.parsePath(test[0]);
+      assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
+    });
 
-		[
-			{path: '', dirname: '/'},
-			{path: '/', dirname: '/'},
-			{path: '/a', dirname: '/'},
-			{path: '/a/b', dirname: '/a'},
-			{path: '/a/b/', dirname: '/a'},
-			{path: '/a/b/c', dirname: '/a/b'},
-			{path: '/a/b/../c', dirname: '/a'},
-			{path: '/a/..', dirname: '/'},
-			{path: '/a/../..', dirname: '/'},
-			{path: 'a/b', dirname: '/a'},
-		].forEach(function (test) {
-			assert.strictEqual(
-				fs.dirname(test.path),
-				test.dirname,
-				util.format('dirname for path: "%s"', test.path)
-			);
-		});
+  });
 
-	});
+
+  it('should return the directory name of a path', function () {
+
+    var fs = new BrowserFS();
+
+    assert.isFunction(fs.dirname);
+
+    [
+      {path: '', dirname: '/'},
+      {path: '/', dirname: '/'},
+      {path: '/a', dirname: '/'},
+      {path: '/a/b', dirname: '/a'},
+      {path: '/a/b/', dirname: '/a'},
+      {path: '/a/b/c', dirname: '/a/b'},
+      {path: '/a/b/../c', dirname: '/a'},
+      {path: '/a/..', dirname: '/'},
+      {path: '/a/../..', dirname: '/'},
+      {path: 'a/b', dirname: '/a'},
+    ].forEach(function (test) {
+      assert.strictEqual(
+        fs.dirname(test.path),
+        test.dirname,
+        util.format('dirname for path: "%s"', test.path)
+      );
+    });
+
+  });
 
 });
 
@@ -114,36 +114,36 @@ describe("paths (nix only)", function () {
 describe('stats', function () {
 
 
-	it('should have stats for root node', function () {
+  it('should have stats for root node', function () {
 
-		var fs = new BrowserFS,
-			result = fs.statSync('/');
+    var fs = new BrowserFS(),
+      result = fs.statSync('/');
 
-		assert.strictEqual(result.isFile(), false);
-		assert.strictEqual(result.isDirectory(), true);
-		assert.strictEqual(result.isBlockDevice(), false);
-		assert.strictEqual(result.isCharacterDevice(), false);
-		assert.strictEqual(result.isSymbolicLink(), false);
-		assert.strictEqual(result.isFIFO(), false);
-		assert.strictEqual(result.isSocket(), false);		
-		assertTimeCloseTo(result.atime.getTime());
-		assertTimeCloseTo(result.mtime.getTime());
-		assertTimeCloseTo(result.ctime.getTime());
-		assert.strictEqual(result.size, 0);
+    assert.strictEqual(result.isFile(), false);
+    assert.strictEqual(result.isDirectory(), true);
+    assert.strictEqual(result.isBlockDevice(), false);
+    assert.strictEqual(result.isCharacterDevice(), false);
+    assert.strictEqual(result.isSymbolicLink(), false);
+    assert.strictEqual(result.isFIFO(), false);
+    assert.strictEqual(result.isSocket(), false);   
+    assertTimeCloseTo(result.atime.getTime());
+    assertTimeCloseTo(result.mtime.getTime());
+    assertTimeCloseTo(result.ctime.getTime());
+    assert.strictEqual(result.size, 0);
 
-	});
+  });
 
 
-	it('should throw error for non existing files', function () {
-	    assert.throw(
-	      function () {
-	      	var fs = new BrowserFS;
-	      	fs.statSync('/unknown/path');
-	      },
-	      Error,
-	      'ENOENT'
-	    );
-	});
+  it('should throw error for non existing files', function () {
+      assert.throw(
+        function () {
+          var fs = new BrowserFS();
+          fs.statSync('/unknown/path');
+        },
+        Error,
+        'ENOENT'
+      );
+  });
 
 });
 
@@ -151,23 +151,69 @@ describe('stats', function () {
 describe('exists', function () {
 
 
-	it('should test for existing directory', function () {
+  it('should test for existing directory', function () {
 
-			var fs = new BrowserFS();
+      var fs = new BrowserFS();
 
-			assert(fs.existsSync());
-			assert(fs.existsSync(''));
-			assert(fs.existsSync('/'));
-			assert(!fs.existsSync('/not existing directory'));
+      assert(fs.existsSync());
+      assert(fs.existsSync(''));
+      assert(fs.existsSync('/'));
+      assert(!fs.existsSync('/not existing directory'));
 
-			fs.mkdirSync('/subdir');
-			assert(fs.existsSync('/subdir'));
+      fs.mkdirSync('/subdir');
+      assert(fs.existsSync('/subdir'));
 
-			fs.mkdirSync('/subdir/subdir2');
-			assert(fs.existsSync('/subdir/subdir2'));
+      fs.mkdirSync('/subdir/subdir2');
+      assert(fs.existsSync('/subdir/subdir2'));
 
-			assert(!fs.existsSync('/subdir/subdir2/not existing directory'));
-	});
+      assert(!fs.existsSync('/subdir/subdir2/not existing directory'));
+  });
+
+});
+
+
+describe('file nodes', function () {
+
+  it('should have a function to get file nodes', function () {
+    
+    var fs = new BrowserFS();
+    
+    assert.isFunction(fs.getNode, 'get node');
+    assert.isObject(fs.getNode('/'), 'root node');
+  });
+
+  it('should get directory nodes', function () {
+
+    var fs = new BrowserFS();
+
+    fs.mkdirpSync('/dirA/dirB');
+
+    node = fs.getNode('/dirA');
+    assert.property(node, 'data');
+    assert.property(node, 'ctime');
+
+    node = fs.getNode('/dirA/dirB');
+    assert.property(node, 'data');
+    assert.property(node, 'ctime');
+  });
+
+  it('should get file nodes', function () {
+
+    var fs = new BrowserFS(),
+      node;
+
+    fs.writeFileSync('/file0', 'file0 content');
+    fs.mkdirpSync('/dirA');    
+    fs.writeFileSync('/dirA/file1', 'file1 content');
+
+    node = fs.getNode('/file0');
+    assert.property(node, 'data');
+    assert.property(node, 'ctime');
+
+    node = fs.getNode('/dirA/file1');
+    assert.property(node, 'data');
+    assert.property(node, 'ctime');
+  });
 
 });
 
@@ -175,101 +221,101 @@ describe('exists', function () {
 describe("directory", function () {
 
 
-	it("should have a empty root directory as startup", function (done) {
+  it("should have a empty root directory as startup", function (done) {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		assert(fs.readdirSync('/'), []);
+    assert(fs.readdirSync('/'), []);
 
-		fs.readdir("/", function (err, files) {
-			if(err) throw err;
-			assert(files, []);
-			done();
-		});
+    fs.readdir("/", function (err, files) {
+      if(err) throw err;
+      assert(files, []);
+      done();
+    });
 
-	});
+  });
 
 
-	it('should create a directory', function () {
+  it('should create a directory', function () {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		fs.mkdirSync('/subdir');
-		assert.deepEqual(fs.readdirSync('/'), ['subdir']);
+    fs.mkdirSync('/subdir');
+    assert.deepEqual(fs.readdirSync('/'), ['subdir']);
 
-		fs.mkdirSync('/subdir2');
-		assert.deepEqual(fs.readdirSync('/'), ['subdir', 'subdir2']);
+    fs.mkdirSync('/subdir2');
+    assert.deepEqual(fs.readdirSync('/'), ['subdir', 'subdir2']);
 
-		fs.mkdirSync('/subdir2/subdir3');
-		assert.deepEqual(fs.readdirSync('/subdir2'), ['subdir3']);
+    fs.mkdirSync('/subdir2/subdir3');
+    assert.deepEqual(fs.readdirSync('/subdir2'), ['subdir3']);
 
     assert.throw(
       function () {
-      	fs.mkdirSync('/');
+        fs.mkdirSync('/');
       },
       Error,
       'ENODIR'
     );
 
-	});
+  });
 
 
-	it('should create a directories -p', function () {
+  it('should create a directories -p', function () {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		fs.mkdirpSync('/subdir/subdir2');
-		assert.deepEqual(fs.readdirSync('/'), ['subdir']);
-		assert.deepEqual(fs.readdirSync('/subdir'), ['subdir2']);
+    fs.mkdirpSync('/subdir/subdir2');
+    assert.deepEqual(fs.readdirSync('/'), ['subdir']);
+    assert.deepEqual(fs.readdirSync('/subdir'), ['subdir2']);
 
     assert.throw(
       function () {
-      	fs.mkdirpSync('/');
+        fs.mkdirpSync('/');
       },
       Error,
       'ENODIR'
     );
 
-	});
+  });
 
 
-	it('should not remove a non-empty directory', function () {
+  it('should not remove a non-empty directory', function () {
 
-		var fs = new BrowserFS();
-		fs.mkdirpSync('/subdir/subdir2');
+    var fs = new BrowserFS();
+    fs.mkdirpSync('/subdir/subdir2');
 
     assert.throw(
       function () {
-      	fs.rmdirSync('/subdir');
+        fs.rmdirSync('/subdir');
       },
       Error,
       'ENOTEMPTY'
     );
-	});
+  });
 
 
-	it('should remove a directory', function () {
+  it('should remove a directory', function () {
 
-		var fs = new BrowserFS();
-		fs.mkdirpSync('/subdir/subdir2');
-		fs.rmdirSync('/subdir/subdir2');
-		assert(!fs.existsSync('/subdir/subdir2'));
+    var fs = new BrowserFS();
+    fs.mkdirpSync('/subdir/subdir2');
+    fs.rmdirSync('/subdir/subdir2');
+    assert(!fs.existsSync('/subdir/subdir2'));
 
-	});
+  });
 
 
-	it('should remove a non-empty directory', function () {
-		var fs = new BrowserFS();
-		fs.mkdirpSync('/subdir/subdir2');
-		fs.rmrfSync('/subdir');
-		assert(!fs.existsSync('/subdir'));
-		assert(!fs.existsSync('/subdir/subdir2'));
+  it('should remove a non-empty directory', function () {
+    var fs = new BrowserFS();
+    fs.mkdirpSync('/subdir/subdir2');
+    fs.rmrfSync('/subdir');
+    assert(!fs.existsSync('/subdir'));
+    assert(!fs.existsSync('/subdir/subdir2'));
 
-		fs.mkdirpSync('/subdir3');
-		fs.rmrfSync('/');
-		assert(!fs.existsSync('/subdir3'));
-		assert(fs.existsSync('/'));
-	});
+    fs.mkdirpSync('/subdir3');
+    fs.rmrfSync('/');
+    assert(!fs.existsSync('/subdir3'));
+    assert(fs.existsSync('/'));
+  });
 
 
   it('should rename a directory', function (done) {
@@ -312,50 +358,49 @@ describe("directory", function () {
 
   });
 
-
-});
+}); // describe directory
 
 
 describe('files', function () {
 
 
-	it('should create a file', function () {
+  it('should create a file', function () {
 
-		var fs = new BrowserFS();
+    var fs = new BrowserFS();
 
-		assert(!fs.existsSync('/file'));
-		fs.writeFileSync('/file', '');
-		assert(fs.existsSync('/file'));
-	});
-
-
-	it('should write string to file', function () {
-		var fs = new BrowserFS();
-
-		fs.writeFileSync('/file', 'file string content');
-		assert(fs.existsSync('/file'));
-	});
+    assert(!fs.existsSync('/file'));
+    fs.writeFileSync('/file', '');
+    assert(fs.existsSync('/file'));
+  });
 
 
-	it('should read string from file', function () {
+  it('should write string to file', function () {
+    var fs = new BrowserFS();
 
-		var fs = new BrowserFS();
-		fs.writeFileSync('/file', 'file string content');
-		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), 'file string content');
-
-	});
+    fs.writeFileSync('/file', 'file string content');
+    assert(fs.existsSync('/file'));
+  });
 
 
-	it('should write buffer to file', function () {
+  it('should read string from file', function () {
 
-		var fs = new BrowserFS(),
-		  testStr = 'file string content',
-			buffer = str2ab(testStr);
+    var fs = new BrowserFS();
+    fs.writeFileSync('/file', 'file string content');
+    assert.equal(fs.readFileSync('/file', {encoding: 'string'}), 'file string content');
 
-		fs.writeFileSync('/file', buffer);
-		assert.equal(fs.readFileSync('/file', {encoding: 'string'}), testStr);
+  });
 
-	});
+
+  it('should write buffer to file', function () {
+
+    var fs = new BrowserFS(),
+      testStr = 'file string content',
+      buffer = str2ab(testStr);
+
+    fs.writeFileSync('/file', buffer);
+    assert.equal(fs.readFileSync('/file', {encoding: 'string'}), testStr);
+
+  });
 
 
   it('should rename a file', function (done) {
@@ -390,5 +435,4 @@ describe('files', function () {
 
   });
 
-
-});
+}); // describe files

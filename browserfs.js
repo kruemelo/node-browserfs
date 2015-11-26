@@ -65,6 +65,10 @@
         return node;
     }
 
+    BrowserFS.prototype.getNode = function (filename) {
+        return find(this.parsePath(filename), this.root);
+    };
+
     BrowserFS.prototype.joinPath = function () {
         var path = [],
             parts = arguments || [];
