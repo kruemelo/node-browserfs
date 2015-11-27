@@ -75,7 +75,7 @@
             'utf8': 'utf-8',
             'utf16le': 'utf-16le',
             'macintosh': 'macintosh'
-        }[encoding];
+        }[encoding] || 'utf8';
         return (new TextDecoder(encoding)).decode(new DataView(buffer));
     };
 
@@ -338,9 +338,14 @@
         var path = this.parsePath(_path),
             file = find(path, this.root);
 
+        if ('string' === typeof options) {
+            options = {
+                encoding: options
+            };
+        }
 
         options = options || {
-            encoding: false
+            encoding: null
         };
 
         if (!isFile(file)) {

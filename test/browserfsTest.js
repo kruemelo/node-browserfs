@@ -435,9 +435,16 @@ describe('files', function () {
   it('should read string from file', function () {
 
     var fs = new BrowserFS();
+
     fs.writeFileSync('/file', 'file string content');
     assert.equal(
       fs.readFileSync('/file', {encoding: 'utf8'}), 
+      'file string content'
+    );
+
+    fs.writeFileSync('/file', 'file string content');
+    assert.equal(
+      fs.readFileSync('/file', 'utf8'), 
       'file string content'
     );
 
