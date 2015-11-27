@@ -34,7 +34,7 @@ function assertTimeCloseTo (testTime, expectedTime, delta, message) {
 }
 
 
-describe("paths (nix only)", function () {
+describe("paths", function () {
 
   it("should join paths", function () {
 
@@ -409,11 +409,37 @@ describe('files', function () {
   });
 
 
+  it('should read buffer from file by default', function () {
+
+    var fs = new BrowserFS();
+    fs.writeFileSync('/file', 'file string content');
+    assert.instanceOf(
+      fs.readFileSync('/file'),
+      ArrayBuffer, 
+      'file content as array buffer'
+    );
+
+  });
+
+
+  it('should convert ArrayBuffer to String', function () {
+    
+    var fs = new BrowserFS(),
+      arrayBuffer = str2ab('½ + ¼ = ¾');
+
+    assert.isFunction(fs.arrayBufferToString);
+    assert.isString(fs.arrayBufferToString(arrayBuffer));
+  });
+
+
   it('should read string from file', function () {
 
     var fs = new BrowserFS();
     fs.writeFileSync('/file', 'file string content');
-    assert.equal(fs.readFileSync('/file', {encoding: 'string'}), 'file string content');
+    assert.equal(
+      fs.readFileSync('/file', {encoding: 'utf8'}), 
+      'file string content'
+    );
 
   });
 
@@ -425,7 +451,7 @@ describe('files', function () {
       buffer = str2ab(testStr);
 
     fs.writeFileSync('/file', buffer);
-    assert.equal(fs.readFileSync('/file', {encoding: 'string'}), testStr);
+    assert.equal(fs.readFileSync('/file', {encoding: 'utf8'}), testStr);
 
   });
 
@@ -447,11 +473,18 @@ describe('files', function () {
 
         assert(!fs.existsSync('/original_filename'), 'original file should not exist');
         assert(fs.existsSync('/renamed_filename'), 'renamed file should exist');
-        assert.equal(fs.readFileSync('/renamed_filename', {encoding: 'string'}), testStr, 'file content should be same as original file');
+        assert.equal(
+          fs.readFileSync('/renamed_filename', {encoding: 'utf8'}), 
+          testStr, 
+          'file content should be same as original file'
+        );
 
         newStats = fs.statSync('/renamed_filename');
         assert(newStats.isFile(), 'renamed file should be type of file');
-        assert(newStats.ctime > oldStats.ctime, 'new file stats ctime should be greater than old file stats ctime');
+        assert(
+          newStats.ctime > oldStats.ctime, 
+          'new file stats ctime should be greater than old file stats ctime'
+        );
 
         newParentStats = fs.statSync('/');
         assert(newParentStats.mtime > oldParentStats.mtime);

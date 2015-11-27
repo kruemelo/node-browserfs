@@ -65,6 +65,20 @@
         return node;
     }
 
+    // optional encodings: 'utf8' (default), 'utf16le', 'macintosh'
+    BrowserFS.prototype.arrayBufferToString = function (buffer, encoding) {
+        if ('undefined' === typeof TextDecoder) {
+            return String.fromCharCode.apply(null, new Uint16Array(buffer));            
+        }
+        encoding = encoding || 'utf8';
+        encoding = {
+            'utf8': 'utf-8',
+            'utf16le': 'utf-16le',
+            'macintosh': 'macintosh'
+        }[encoding];
+        return (new TextDecoder(encoding)).decode(new DataView(buffer));
+    };
+
     BrowserFS.prototype.getNode = function (filename) {
         return find(this.parsePath(filename), this.root);
     };
@@ -335,7 +349,8 @@
 
         file.atime = Date.now();
 
-        return options.encoding ? String.fromCharCode.apply(null, new Uint16Array(file.data)) : file.data;
+        return options.encoding ? 
+            this.arrayBufferToString(file.data, options.encoding) : file.data;
     };
 
 
