@@ -1,6 +1,6 @@
 {
   "name": "node-browserfs",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "AMD/CommonJS module providing a node fs-like browser in-memory file system ",
   "main": "browserfs.js",
   "repository": {

@@ -1,0 +1,94 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'publish' ]
+2 info using npm@2.14.9
+3 info using node@v0.12.8
+4 verbose node symlink /usr/bin/node
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec { raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/home/customer/projekte/node-browserfs',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /home/customer/.npm/node-browserfs/1.4.0/package.tgz not in flight; packing
+10 verbose tar pack [ '/home/customer/.npm/node-browserfs/1.4.0/package.tgz',
+10 verbose tar pack   '/home/customer/projekte/node-browserfs' ]
+11 verbose tarball /home/customer/.npm/node-browserfs/1.4.0/package.tgz
+12 verbose folder /home/customer/projekte/node-browserfs
+13 info prepublish node-browserfs@1.4.0
+14 verbose addLocalTarball adding from inside cache /home/customer/.npm/node-browserfs/1.4.0/package.tgz
+15 silly cache afterAdd node-browserfs@1.4.0
+16 verbose afterAdd /home/customer/.npm/node-browserfs/1.4.0/package/package.json not in flight; writing
+17 verbose afterAdd /home/customer/.npm/node-browserfs/1.4.0/package/package.json written
+18 silly publish { name: 'node-browserfs',
+18 silly publish   version: '1.4.0',
+18 silly publish   description: 'AMD/CommonJS module providing a node fs-like browser in-memory file system ',
+18 silly publish   main: 'browserfs.js',
+18 silly publish   repository:
+18 silly publish    { type: 'git',
+18 silly publish      url: 'git://github.com/kruemelo/node-browserfs.git' },
+18 silly publish   devDependencies: { chai: '^3.4.1', mocha: '^2.0.1', requirejs: '^2.1.15' },
+18 silly publish   keywords: [ 'node', 'fs', 'browser' ],
+18 silly publish   scripts: { test: 'mocha' },
+18 silly publish   author: { name: 'kruemelo' },
+18 silly publish   license: 'WTFPL',
+18 silly publish   readme: 'node-browserfs\n==============\n\nAMD/CommonJS module providing a node fs-like browser in-memory file system. Synchronous & async versions available for all functions.\n\nAPI\n---\n\nhttp://nodejs.org/api/fs.html\n\n  * + rmrf [rimraf](https://www.npmjs.org/package/rimraf)\n  * + [mkdirp](https://www.npmjs.org/package/mkdirp)\n  * + [join([path1], [path2], [...])](http://nodejs.org/api/path.html#path_path_join_path1_path2)\n  * + parsePath(path) -> [path1, path2, ...]\n  * + fileSizeSI / fileSizeIEC -> 34.30 kB / 33.50 KiB\n\nUse\n---\n```\nvar BrowserFS = requirejs(\'browserfs\');\nvar fs = new BrowserFS();\n\nfs.statSync(\'/\');\nfs.mkdirSync(\'/subdir\');\nfs.mkdirpSync(\'/subdir2/subdir3\');\nfs.existsSync(\'/subdir/subdir2\');\nfs.rmdirSync(\'/subdir/subdir2\');\nfs.rmrfSync(\'/subdir\');\nfs.writeFileSync(\'/file\', \'file string content\');\nfs.writeFileSync(\'/file\', buffer);\n\n\nfs.stat(\'/file\', function (err, stats) {\n  // human readable file size:\n  // SI: kB,MB,GB,TB,PB,EB,ZB,YB / IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB\n  console.log(fs.fileSizeSI(stats.size), fs.fileSizeIEC(stats.size));\n});\n\n// async example Asynchronous readdir(3)\n// see node js fs api http://nodejs.org/api/fs.html#fs_fs_readdir_path_callback\nfs.readdir(\'/\', function (err, files) {\n  ...\n});\n\n// Asynchronous rename(2) / move directory (or file)\nfs.rename(\'/subdir1/subdir1-1\', \'/subdir2/subdir2-1\', function (err) {\n  ...\n});\n\n```\n\nHave a look at the example folder.\n\nOpen index.html in browser, drop the github timeout png, click on the filename to download..\n\nRead the code.\n\nTest\n----\n\n```\n$ mocha\n```\n\nLicense\n-------\n[WTFPL](http://www.wtfpl.net/)\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '57e36c108dc9095a564e4b38869facfc42d4faf5',
+18 silly publish   bugs: { url: 'https://github.com/kruemelo/node-browserfs/issues' },
+18 silly publish   homepage: 'https://github.com/kruemelo/node-browserfs#readme',
+18 silly publish   _id: 'node-browserfs@1.4.0',
+18 silly publish   _shasum: '8338a46155877b2fa7fefe595cb68d876edefd8e',
+18 silly publish   _from: '.' }
+19 verbose getPublishConfig undefined
+20 silly mapToRegistry name node-browserfs
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/node-browserfs
+24 verbose publish registryBase https://registry.npmjs.org/
+25 silly publish uploading /home/customer/.npm/node-browserfs/1.4.0/package.tgz
+26 verbose request uri https://registry.npmjs.org/node-browserfs
+27 verbose request sending authorization for write operation
+28 info attempt registry request try #1 at 1:55:24 PM
+29 verbose request using bearer token for auth
+30 verbose request id ec2a11a32b97d6b0
+31 http request PUT https://registry.npmjs.org/node-browserfs
+32 http 403 https://registry.npmjs.org/node-browserfs
+33 verbose headers { 'content-type': 'application/json',
+33 verbose headers   'cache-control': 'max-age=60',
+33 verbose headers   'content-length': '95',
+33 verbose headers   'accept-ranges': 'bytes',
+33 verbose headers   date: 'Fri, 27 Nov 2015 12:55:39 GMT',
+33 verbose headers   via: '1.1 varnish',
+33 verbose headers   connection: 'keep-alive',
+33 verbose headers   'x-served-by': 'cache-fra1246-FRA',
+33 verbose headers   'x-cache': 'MISS',
+33 verbose headers   'x-cache-hits': '0',
+33 verbose headers   'x-timer': 'S1448628937.976979,VS0,VE1401' }
+34 verbose request invalidating /home/customer/.npm/registry.npmjs.org/node-browserfs on PUT
+35 error publish Failed PUT 403
+36 verbose stack Error: "You cannot publish over the previously published version 1.4.0." : node-browserfs
+36 verbose stack     at makeError (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:264:12)
+36 verbose stack     at CachingRegistryClient.<anonymous> (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:252:14)
+36 verbose stack     at Request._callback (/usr/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:172:14)
+36 verbose stack     at Request.self.callback (/usr/lib/node_modules/npm/node_modules/request/request.js:198:22)
+36 verbose stack     at Request.emit (events.js:110:17)
+36 verbose stack     at Request.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1082:10)
+36 verbose stack     at Request.emit (events.js:129:20)
+36 verbose stack     at IncomingMessage.<anonymous> (/usr/lib/node_modules/npm/node_modules/request/request.js:1009:12)
+36 verbose stack     at IncomingMessage.emit (events.js:129:20)
+36 verbose stack     at _stream_readable.js:908:16
+37 verbose statusCode 403
+38 verbose pkgid node-browserfs
+39 verbose cwd /home/customer/projekte/node-browserfs
+40 error Linux 3.16.0-53-generic
+41 error argv "/usr/bin/node" "/usr/bin/npm" "publish"
+42 error node v0.12.8
+43 error npm  v2.14.9
+44 error code E403
+45 error "You cannot publish over the previously published version 1.4.0." : node-browserfs
+46 error If you need help, you may report this error at:
+46 error     <https://github.com/npm/npm/issues>
+47 verbose exit [ 1, true ]
