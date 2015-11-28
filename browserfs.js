@@ -256,6 +256,18 @@
     };
 
 
+    BrowserFS.prototype.unlinkSync = function (filename) {
+
+        var dirname = this.dirname(filename),
+            basename = this.basename(filename),
+            parentDir = find(this.parsePath(dirname), this.root);
+
+        delete parentDir.data[basename];
+
+        parentDir.mtime = Date.now();
+    };
+
+
     BrowserFS.prototype.rmrfSync = function (_path) {
 
         var path = this.parsePath(_path),

@@ -500,6 +500,18 @@ describe('files', function () {
       });
     }, 1);
 
-  });
+  }); // rename a file
+
+  it('should delete a file', function () {
+    
+    var fs = new BrowserFS();
+    fs.writeFileSync('file2unlink', 'file2unlink content');
+    
+    assert.isTrue(fs.existsSync('file2unlink'));
+  
+    fs.unlinkSync('file2unlink');
+
+    assert.isFalse(fs.existsSync('file2unlink'));
+  }); // delete a file
 
 }); // describe files
