@@ -26,13 +26,25 @@
         })();
     }
 
-    var BrowserFS = function () {
+    var BrowserFS = function (fnDone) {
+        
         var time = Date.now();
+
         this.root = {
             mtime: time,
             ctime: time,
             atime: time,
             data: {}
+        };
+
+        this.fnDone = function () {
+            var doneArgs = arguments;
+            
+            if ('function' === typeof fnDone) {
+                setTimeout(function () {
+                    fnDone.apply(null, doneArgs);
+                }, 0);
+            }
         };
     };
 
@@ -142,6 +154,9 @@
         if (!node || !node.data) {
             throw new Error('ENOENT');
         }
+
+        this.fnDone('stat', _path);
+
         return {
             size: isDir ? Object.keys(node.data).length : node.data.byteLength,
             ctime: new Date(node.ctime),
@@ -171,10 +186,14 @@
 
         for (i = 0; i < to; ++i) {
             if (!isDirectory(node)) {
+                this.fnDone('exists', _path);
                 return false;
             }
             node = node.data[path[i]];
         }
+        
+        this.fnDone('exists', _path);
+
         return !!node;
     };
 
@@ -194,7 +213,12 @@
             mtime: time,
             atime: time,
         };
+
         parentDir.mtime = time;
+
+        this.fnDone('mkdir', _path);
+
+        return this;
     };
 
 
@@ -219,6 +243,10 @@
                 this.mkdirSync(tmpPath.join('/'));
             }
         }
+
+        this.fnDone('mkdirp', _path);
+
+        return this;
     };
 
 
@@ -230,7 +258,11 @@
         if (!isDirectory(dir)) {
             throw new Error('ENODIR');
         }
+        
         dir.atime = Date.now();
+
+        this.fnDone('readdir', _path);
+        
         return Object.keys(dir.data);
     };
 
@@ -253,6 +285,10 @@
         delete parentDir.data[dirname];
 
         parentDir.mtime = Date.now();
+
+        this.fnDone('rmdir', _path);
+
+        return this;
     };
 
 
@@ -265,6 +301,10 @@
         delete parentDir.data[basename];
 
         parentDir.mtime = Date.now();
+
+        this.fnDone('unlink', filename);
+
+        return this;
     };
 
 
@@ -285,6 +325,10 @@
         }
 
         parentDir.mtime = Date.now();
+
+        this.fnDone('rmrf', _path);
+
+        return this;
     };
 
 
@@ -339,6 +383,10 @@
         }
 
         parentDir.atime = time;
+
+        this.fnDone('writeFile', _path);
+
+        return this;
     };
 
 
@@ -365,6 +413,8 @@
         }
 
         file.atime = Date.now();
+
+        this.fnDone('readFile', _path);
 
         return options.encoding ? 
             this.arrayBufferToString(file.data, options.encoding) : file.data;
@@ -403,6 +453,10 @@
         // delete old ref
         delete oldParentDir.data[oldFilename];
         oldParentDir.mtime = time;
+
+        this.fnDone('rename', {oldPath: _oldPath, newPath: _newPath});
+
+        return this;
     };
 
     // async functions, one argument plus callback

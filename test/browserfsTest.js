@@ -33,8 +33,27 @@ function assertTimeCloseTo (testTime, expectedTime, delta, message) {
   assert.closeTo(testTime, expectedTime, delta, message);
 }
 
+describe('browserfs', function () {
 
-describe("paths", function () {
+  it('ctor takes a done-callback function', function (done) {
+
+    var browserfs;
+
+    function doneCallback (fnName, data) {
+      assert.strictEqual(fnName, 'stat');
+      assert.strictEqual(data, '/');
+      done();
+    }
+
+    browserfs = new BrowserFS(doneCallback);
+
+    browserfs.statSync('/');
+
+  });
+
+});
+
+describe('paths', function () {
 
   it("should join paths", function () {
 
