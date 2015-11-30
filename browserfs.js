@@ -108,7 +108,7 @@
             }
         }
         else {
-            buffer = (new TextEncoder(encoding)).encode(string).buffer;
+            buffer = (new TextEncoder(encoding)).encode(str).buffer;
         }        
 
         return buffer;
