@@ -451,6 +451,22 @@ describe('files', function () {
   });
 
 
+  it('should convert string to ArrayBuffer', function () {
+    
+    var fs = new BrowserFS(),
+      str = '½ + ¼ = ¾',
+      arrayBuffer;
+
+    assert.isFunction(fs.stringToArrayBuffer);
+
+    arrayBuffer = fs.stringToArrayBuffer(str);
+
+    assert.instanceOf(arrayBuffer, ArrayBuffer);
+    
+    assert.strictEqual(fs.arrayBufferToString(arrayBuffer), str);
+  });
+
+
   it('should read string from file', function () {
 
     var fs = new BrowserFS();

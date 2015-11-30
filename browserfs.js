@@ -26,6 +26,12 @@
         })();
     }
 
+    var encodings = {
+            'utf8': 'utf-8',
+            'utf16le': 'utf-16le',
+            'utf16be': 'utf-16be'
+        };
+
     var BrowserFS = function (fnDone) {
         
         var time = Date.now();
@@ -77,19 +83,37 @@
         return node;
     }
 
-    // optional encodings: 'utf8' (default), 'utf16le', 'macintosh'
+    // optional encodings: 'utf8' (default), 'utf16le', 'utf16be' 
+    // (https://encoding.spec.whatwg.org/#the-encoding)
     BrowserFS.prototype.arrayBufferToString = function (buffer, encoding) {
         if ('undefined' === typeof TextDecoder) {
             return String.fromCharCode.apply(null, new Uint16Array(buffer));            
         }
-        encoding = encoding || 'utf8';
-        encoding = {
-            'utf8': 'utf-8',
-            'utf16le': 'utf-16le',
-            'macintosh': 'macintosh'
-        }[encoding] || 'utf8';
+        encoding = encodings[encoding] || 'utf8';
         return (new TextDecoder(encoding)).decode(new DataView(buffer));
     };
+
+    // optional encodings: 'utf8', 'utf16le', 'utf16be'
+    BrowserFS.prototype.stringToArrayBuffer = function (str, encoding) {
+        
+        var buffer;
+
+        encoding = encodings[encoding] || 'utf8';
+        
+        if ('undefined' === typeof TextEncoder) {
+            buffer = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+            var bufferView = new Uint16Array(buffer);
+            for (var i = 0, strLen = str.length; i < strLen; ++i) {
+                bufferView[i] = str.charCodeAt(i);
+            }
+        }
+        else {
+            buffer = (new TextEncoder(encoding)).encode(string).buffer;
+        }        
+
+        return buffer;
+    };
+
 
     BrowserFS.prototype.getNode = function (filename) {
         return find(this.parsePath(filename), this.root);
@@ -348,17 +372,19 @@
             throw new Error('EINVALIDPATH');
         }
 
+        if ('string' === typeof options) {
+            options = {
+                encoding: options
+            };
+        }
+
         options = options || {
-            encoding: true
+            encoding: null
         };
 
         if ('string' === typeof content) {
             // convert into ArrayBuffer
-            buffer = new ArrayBuffer(content.length * 2); // 2 bytes for each char
-            var bufferView = new Uint16Array(buffer);
-            for (var i = 0, strLen = content.length; i < strLen; ++i) {
-                bufferView[i] = content.charCodeAt(i);
-            }
+            buffer = this.stringToArrayBuffer(content, options.encoding);
         } else {
             buffer = content;
         }
