@@ -142,6 +142,10 @@
         return path;
     };
 
+    BrowserFS.prototype.normalizePath = function (path) {
+        return '/' + this.parsePath(path).join('/');
+    };
+
     BrowserFS.prototype.dirname = function (path) {
 
         var pathParts = this.parsePath(path);

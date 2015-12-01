@@ -99,6 +99,27 @@ describe('paths', function () {
 
   });
 
+  it('should normalize paths', function () {
+
+    var fs = new BrowserFS();
+
+    [
+      ['', '/'],
+      ['/', '/'],
+      ['/a', '/a'],
+      ['a', '/a'],
+      ['/a/', '/a'],
+      ['/a/b', '/a/b'],
+      ['/a/b/../c', '/a/c'],
+      ['/a/../', '/'],
+      ['/a/./', '/a'],
+      ['/a/../..', '/']
+    ].forEach(function (test) {
+      var result = fs.normalizePath(test[0]);
+      assert.strictEqual(result, test[1], util.format('test: "%s": ', test[0]));
+    });
+
+  });
 
   it('should return the directory name of a path', function () {
 
