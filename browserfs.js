@@ -5,7 +5,7 @@
   }
   else if (typeof define === 'function' && typeof define.amd === 'object') {
     // AMD
-    define(['browserfs'], definition);
+    define([], definition);
   }
   else if (typeof window === 'object') {
     // DOM
