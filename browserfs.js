@@ -503,7 +503,7 @@
     });
 
     // async functions, optional second argument plus callback
-    ['writeFile', 'readFile'].forEach(function (fn) {
+    ['readFile'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, optArg, callback) {
             var result;
             if (!callback) {
@@ -525,6 +525,23 @@
             var result;
             try {
                 result = this[fn + "Sync"](arg1, arg2);
+            } catch (e) {
+                return callback(e);
+            }
+            return callback(null, result);
+        };
+    });
+
+    // async functions, optional third argument plus callback
+    ['writeFile'].forEach(function (fn) {
+        BrowserFS.prototype[fn] = function (arg1, arg2, optArg, callback) {
+            var result;
+            if (!callback) {
+                callback = optArg;
+                optArg = undefined;
+            }
+            try {
+                result = this[fn + "Sync"](arg1, arg2, optArg);
             } catch (e) {
                 return callback(e);
             }

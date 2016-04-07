@@ -449,6 +449,28 @@ describe('files', function () {
   });
 
 
+  it('should write to file async', function (done) {
+    var fs = new BrowserFS();
+
+    fs.writeFile('/file-async', 'file string content', function (err) {
+      assert(!err);
+      assert(fs.existsSync('/file-async'));
+      done();
+    });
+  });
+
+
+  it('should write to file async with options', function (done) {
+    var fs = new BrowserFS();
+
+    fs.writeFile('/file-async-options', 'file string content', 'utf8', function (err) {
+      assert(!err);
+      assert(fs.existsSync('/file-async-options'));
+      done();
+    });
+  });
+
+
   it('should read buffer from file by default', function () {
 
     var fs = new BrowserFS();
