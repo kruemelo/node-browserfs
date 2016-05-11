@@ -230,19 +230,26 @@
 
         var path = this.parsePath(_path),
             parentDir = find(path.slice(0, path.length - 1), this.root),
-            time = Date.now();
+            time = Date.now(),
+            dirBasename;
 
         if (!path.length || !isDirectory(parentDir)) {
             throw new Error('ENODIR');
         }
-        parentDir.data[path[path.length - 1]] = {
-            data: {},
-            ctime: time,
-            mtime: time,
-            atime: time,
-        };
 
-        parentDir.mtime = time;
+        dirBasename = path[path.length - 1];
+
+        if (!parentDir.data[dirBasename]) {
+            
+            parentDir.data[dirBasename] = {
+                data: {},
+                ctime: time,
+                mtime: time,
+                atime: time,
+            };
+
+            parentDir.mtime = time;
+        }
 
         this.fnDone('mkdir', _path);
 

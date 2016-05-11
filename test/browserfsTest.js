@@ -326,8 +326,19 @@ describe("directory", function () {
 
   });
 
+  it('should not recreate an existing directory', function () {
 
-  it('should create a directories -p', function () {
+    var fs = new BrowserFS();
+
+    fs.mkdirpSync('/dir/subdir');
+    assert.deepEqual(fs.readdirSync('/dir'), ['subdir']);
+
+    fs.mkdirSync('/dir');
+    assert.deepEqual(fs.readdirSync('/dir'), ['subdir']);
+  });
+
+
+  it('should create directories -p', function () {
 
     var fs = new BrowserFS();
 

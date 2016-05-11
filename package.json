@@ -1,6 +1,6 @@
 {
   "name": "node-browserfs",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "AMD/CommonJS module providing a node fs-like browser in-memory file system ",
   "main": "browserfs.js",
   "repository": {
@@ -8,9 +8,9 @@
     "url": "git://github.com/kruemelo/node-browserfs.git"
   },
   "devDependencies": {
-    "chai": "^3.4.1",
-    "mocha": "^2.0.1",
-    "requirejs": "^2.1.15"
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5",
+    "requirejs": "^2.2.0"
   },
   "keywords": [
     "node",
@@ -21,5 +21,7 @@
     "test": "mocha"
   },
   "author": "kruemelo",
-  "license": "WTFPL"
+  "license": "WTFPL",
+  "dependencies": {
+  }
 }
