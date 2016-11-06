@@ -14,8 +14,8 @@
 }(function () {
 
     /* String.trim() Polyfill
-	Running the following code before any other code will create String.trim if it's not natively available.
-	*/
+    Running the following code before any other code will create String.trim if it's not natively available.
+    */
     if (!String.prototype.trim) {
         (function () {
             // Make sure we trim BOM and NBSP
@@ -162,14 +162,14 @@
     // human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
     BrowserFS.prototype.fileSizeSI = function (a, b, c, d, e){
      return (b = Math, c= b.log, d = 1e3, e = c(a) / c(d) |0 , a/b.pow(d,e)).toFixed(e ? 2 : 0)
-     	+ ' ' + (e ? 'kMGTPEZY' [--e] + 'B' : 'Bytes');
+        + ' ' + (e ? 'kMGTPEZY' [--e] + 'B' : 'Bytes');
     };
 
 
     // human readable file size IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
     BrowserFS.prototype.fileSizeIEC = function (a, b, c, d, e){
      return (b = Math, c = b.log, d=1024, e= c(a) / c(d) | 0, a/b.pow(d,e)).toFixed(e ? 2 : 0)
-     	+ ' ' + (e ? 'KMGTPEZY' [--e] + 'iB' : 'Bytes');
+        + ' ' + (e ? 'KMGTPEZY' [--e] + 'iB' : 'Bytes');
     };
 
 
@@ -496,8 +496,15 @@
         return this;
     };
 
+    // async functions, one argument plus callback without err
+    ['exists'].forEach(function (fn) {
+        BrowserFS.prototype[fn] = function (path, callback) {
+            return callback(this[fn + "Sync"](path));
+        };
+    });
+
     // async functions, one argument plus callback
-    ['stat', 'exists', 'readdir', 'mkdirp', 'mkdir', 'rmdir', 'rmrf', 'unlink'].forEach(function (fn) {
+    ['stat', 'readdir', 'mkdirp', 'mkdir', 'rmdir', 'rmrf', 'unlink'].forEach(function (fn) {
         BrowserFS.prototype[fn] = function (path, callback) {
             var result;
             try {
