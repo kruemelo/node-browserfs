@@ -63,11 +63,11 @@
     }
 
     function isDirectory (node) {
-        return !!(node && node.data instanceof Object && !isFile(node));
+        return !!(node && !node.isFile && node.data instanceof Object);
     }
 
     function isFile (node) {
-        return !!(node && node.data instanceof ArrayBuffer);
+        return !!(node && node.isFile);
     }
 
     function find (path, rootNode) {
@@ -415,6 +415,7 @@
                 ctime: time,
                 mtime: time,
                 atime: time,
+                isFile: true
             };
             parentDir.mtime = time;
         }
