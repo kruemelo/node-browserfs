@@ -441,6 +441,33 @@ describe("directory", function () {
 
   });
 
+
+  it('should access directory', function () {
+
+    var fs = new BrowserFS();
+    
+    fs.mkdirSync('access-dir', 'content');
+
+    assert.throw(
+      function () {
+        fs.accessSync('no-access-dir', BrowserFS.F_OK);
+      },
+      Error,
+      'ENOENT'
+    );
+
+    assert.throw(
+      function () {
+        fs.accessSync('no-dir/access-dir');
+      },
+      Error,
+      'ENOENT'
+    );
+
+    assert.isTrue(fs.accessSync('access-dir'));
+
+  });
+
 }); // describe directory
 
 
@@ -609,6 +636,7 @@ describe('files', function () {
   it('should delete a file', function () {
     
     var fs = new BrowserFS();
+
     fs.writeFileSync('file2unlink', 'file2unlink content');
     
     assert.isTrue(fs.existsSync('file2unlink'));
@@ -617,5 +645,40 @@ describe('files', function () {
 
     assert.isFalse(fs.existsSync('file2unlink'));
   }); // delete a file
+
+
+  it('should access file', function (done) {
+
+    var fs = new BrowserFS();
+    
+    fs.writeFileSync('access-file', 'content');
+
+    assert.throw(
+      function () {
+        fs.accessSync('no-access-file', BrowserFS.F_OK);
+      },
+      Error,
+      'ENOENT'
+    );
+
+    assert.throw(
+      function () {
+        fs.accessSync('no-access-dir/file');
+      },
+      Error,
+      'ENOENT'
+    );
+
+    assert.isTrue(fs.accessSync('access-file'));
+
+    // async version
+    fs.access('access-file', function (err) {
+
+      assert(!err);
+
+      done();
+    });
+
+  });
 
 }); // describe files
