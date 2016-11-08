@@ -4,34 +4,12 @@
 var path = require('path');
 var assert = require('chai').assert;
 var util = require('util');
-var requirejs = require('requirejs');
 
-requirejs.config({
-  paths: {
-    'browserfs': path.join(__dirname, "../browserfs")
-  }
-});
-
-var BrowserFS = requirejs('browserfs');
+var BrowserFS = require('../lib/browserfs.js');
 
 function trueFn() { return true }
 function falseFn() { return false }
 
-// http://updates.html5rocks.com/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
-function str2ab(str) {
-  var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-  var bufView = new Uint16Array(buf);
-  for (var i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
-
-function assertTimeCloseTo (testTime, expectedTime, delta, message) {
-  expectedTime = expectedTime || Date.now();
-  delta = delta || 500;
-  assert.closeTo(testTime, expectedTime, delta, message);
-}
 
 describe('browserfs', function () {
 
@@ -48,6 +26,36 @@ describe('browserfs', function () {
     browserfs = new BrowserFS(doneCallback);
 
     browserfs.statSync('/');
+
+  });
+
+
+  it('should expose node Buffer', function () {
+
+    // https://nodejs.org/docs/latest-v5.x/api/buffer.html#buffer_buffers_and_character_encodings
+
+    const str = 'tést';
+    const arrayBuffer = Uint8Array.from([1,2,4]).buffer;
+    
+    var buf = BrowserFS.Buffer.from(str, 'utf8');
+
+    assert.instanceOf(buf, Buffer);
+
+    // to utf8
+    assert.strictEqual(buf.toString('utf8'), str);
+
+    // to utf16le
+    assert.strictEqual(buf.toString('utf16le'), '썴玩');
+
+    // to base64
+    assert.strictEqual(buf.toString('base64'), 'dMOpc3Q=');
+
+    buf = BrowserFS.Buffer.from(arrayBuffer);
+
+    assert.deepEqual(buf.buffer, arrayBuffer);
+
+    // to ArrayBuffer
+    assert.instanceOf(buf.buffer, ArrayBuffer);
 
   });
 
@@ -193,9 +201,6 @@ describe('stats', function () {
     assert.strictEqual(result.isSymbolicLink(), false);
     assert.strictEqual(result.isFIFO(), false);
     assert.strictEqual(result.isSocket(), false);   
-    assertTimeCloseTo(result.atime.getTime());
-    assertTimeCloseTo(result.mtime.getTime());
-    assertTimeCloseTo(result.ctime.getTime());
     assert.strictEqual(result.size, 0);
 
   });
@@ -488,36 +493,46 @@ describe('files', function () {
     fs.writeFileSync('/file', 'file string content');
     assert.instanceOf(
       fs.readFileSync('/file'),
-      ArrayBuffer, 
-      'file content as array buffer'
+      Buffer, 
+      'file content as buffer'
     );
 
   });
 
 
-  it('should convert ArrayBuffer to String', function () {
-    
+  it('should read and write ArrayBuffer', function () {
+
     var fs = new BrowserFS(),
-      arrayBuffer = str2ab('½ + ¼ = ¾');
+      contentStr = 'file string còntént',
+      buffer = BrowserFS.Buffer.from(contentStr),
+      arrayBuffer = new Int8Array(buffer).buffer;
 
-    assert.isFunction(fs.arrayBufferToString);
-    assert.isString(fs.arrayBufferToString(arrayBuffer));
-  });
-
-
-  it('should convert string to ArrayBuffer', function () {
-    
-    var fs = new BrowserFS(),
-      str = '½ + ¼ = ¾',
-      arrayBuffer;
-
-    assert.isFunction(fs.stringToArrayBuffer);
-
-    arrayBuffer = fs.stringToArrayBuffer(str);
+    assert.strictEqual(buffer.length, 21);
 
     assert.instanceOf(arrayBuffer, ArrayBuffer);
+
+    assert.strictEqual(arrayBuffer.byteLength, 21);
+
+    fs.writeFileSync('/file', arrayBuffer);
+
+    assert.instanceOf(
+      fs.readFileSync('/file'),
+      ArrayBuffer, 
+      'file content as ArrayBuffer'
+    );
+
+    assert.deepEqual(
+      fs.readFileSync('/file'),
+      arrayBuffer
+    );
+
+    assert.isString(fs.readFileSync('/file', {encoding: 'utf8'}));
     
-    assert.strictEqual(fs.arrayBufferToString(arrayBuffer), str);
+    assert.strictEqual(
+      fs.readFileSync('/file', {encoding: 'utf8'}),
+      contentStr
+    );
+
   });
 
 
@@ -544,7 +559,7 @@ describe('files', function () {
 
     var fs = new BrowserFS(),
       testStr = 'file string content',
-      buffer = str2ab(testStr);
+      buffer = Buffer.from(testStr, 'utf8');
 
     fs.writeFileSync('/file', buffer);
     assert.equal(fs.readFileSync('/file', {encoding: 'utf8'}), testStr);

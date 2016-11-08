@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "minify": "^2.0.12",
     "mocha": "^2.4.5",
     "requirejs": "^2.2.0"
   },
@@ -18,10 +19,13 @@
     "browser"
   ],
   "scripts": {
-    "test": "mocha"
+    "main": "browserfs.js",
+    "test": "mocha",
+    "build": "npm test && npm run browserify && npm run minify",
+    "browserify": "browserify ./lib/browserfs.js -s BrowserFs > ./browserfs.js",
+    "minify": "./node_modules/.bin/minify ./browserfs.js > ./browserfs.min.js"
   },
   "author": "kruemelo",
   "license": "WTFPL",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
