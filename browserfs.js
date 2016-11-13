@@ -3,7 +3,7 @@
 var Buffer = require('buffer').Buffer;
 var path = require('path');
 
-var BrowserFS = function (fnDone) {
+var BrowserFs = function (fnDone) {
   
   var time = Date.now();
 
@@ -25,14 +25,14 @@ var BrowserFS = function (fnDone) {
   };
 };
 
-BrowserFS.Buffer = Buffer;
-BrowserFS.path = path;
+BrowserFs.Buffer = Buffer;
+BrowserFs.path = path;
 
 // https://nodejs.org/docs/latest-v5.x/api/fs.html#fs_fs_access_path_mode_callback
-BrowserFS.F_OK = 0;
-BrowserFS.X_OK = 1;
-BrowserFS.W_OK = 2;
-BrowserFS.R_OK = 4;
+BrowserFs.F_OK = 0;
+BrowserFs.X_OK = 1;
+BrowserFs.W_OK = 2;
+BrowserFs.R_OK = 4;
 
 
 function trueFn() {
@@ -65,12 +65,12 @@ function find (pathParts, rootNode) {
 }
 
 
-BrowserFS.prototype.getNode = function (filename) {
+BrowserFs.prototype.getNode = function (filename) {
   return find(this.parsePathParts(filename), this.root);
 };
 
 
-BrowserFS.prototype.parsePathParts = function (pathname) {
+BrowserFs.prototype.parsePathParts = function (pathname) {
   var pathParts = [];
   pathname = path.normalize(pathname || '/');
   pathname.split(/\/+/).forEach(function (term) {
@@ -88,20 +88,20 @@ BrowserFS.prototype.parsePathParts = function (pathname) {
 
 
 // human readable file size SI: kB,MB,GB,TB,PB,EB,ZB,YB
-BrowserFS.prototype.fileSizeSI = function (a, b, c, d, e){
+BrowserFs.prototype.fileSizeSI = function (a, b, c, d, e){
  return (b = Math, c= b.log, d = 1e3, e = c(a) / c(d) |0 , a/b.pow(d,e)).toFixed(e ? 2 : 0)
   + ' ' + (e ? 'kMGTPEZY' [--e] + 'B' : 'Bytes');
 };
 
 
 // human readable file size IEC: KiB,MiB,GiB,TiB,PiB,EiB,ZiB,YiB
-BrowserFS.prototype.fileSizeIEC = function (a, b, c, d, e){
+BrowserFs.prototype.fileSizeIEC = function (a, b, c, d, e){
  return (b = Math, c = b.log, d=1024, e= c(a) / c(d) | 0, a/b.pow(d,e)).toFixed(e ? 2 : 0)
   + ' ' + (e ? 'KMGTPEZY' [--e] + 'iB' : 'Bytes');
 };
 
 
-BrowserFS.prototype.statSync = function (filename) {
+BrowserFs.prototype.statSync = function (filename) {
 
   var pathParts = this.parsePathParts(filename),
     node = find(pathParts, this.root),
@@ -134,7 +134,7 @@ BrowserFS.prototype.statSync = function (filename) {
 
 
 // https://nodejs.org/docs/latest-v5.x/api/fs.html#fs_fs_access_path_mode_callback
-BrowserFS.prototype.accessSync = function (filename, mode) {
+BrowserFs.prototype.accessSync = function (filename, mode) {
 
   var pathParts = this.parsePathParts(filename),
     i,
@@ -161,7 +161,7 @@ BrowserFS.prototype.accessSync = function (filename, mode) {
 };
 
 
-BrowserFS.prototype.existsSync = function (filename) {
+BrowserFs.prototype.existsSync = function (filename) {
 
   var pathParts = this.parsePathParts(filename),
     i,
@@ -182,7 +182,7 @@ BrowserFS.prototype.existsSync = function (filename) {
 };
 
 
-BrowserFS.prototype.mkdirSync = function (pathname) {
+BrowserFs.prototype.mkdirSync = function (pathname) {
 
   var pathParts = this.parsePathParts(pathname),
     parentDir = find(pathParts.slice(0, pathParts.length - 1), this.root),
@@ -213,7 +213,7 @@ BrowserFS.prototype.mkdirSync = function (pathname) {
 };
 
 
-BrowserFS.prototype.mkdirpSync = function (pathname) {
+BrowserFs.prototype.mkdirpSync = function (pathname) {
 
   var pathParts = this.parsePathParts(pathname),
     pathLength = pathParts.length,
@@ -241,7 +241,7 @@ BrowserFS.prototype.mkdirpSync = function (pathname) {
 };
 
 
-BrowserFS.prototype.readdirSync = function (pathname) {
+BrowserFs.prototype.readdirSync = function (pathname) {
 
   var pathParts = this.parsePathParts(pathname),
     dir = find(pathParts, this.root);
@@ -258,7 +258,7 @@ BrowserFS.prototype.readdirSync = function (pathname) {
 };
 
 
-BrowserFS.prototype.rmdirSync = function (pathname) {
+BrowserFs.prototype.rmdirSync = function (pathname) {
 
   var pathParts = this.parsePathParts(pathname),
     dir = find(pathParts, this.root),
@@ -283,7 +283,7 @@ BrowserFS.prototype.rmdirSync = function (pathname) {
 };
 
 
-BrowserFS.prototype.unlinkSync = function (filename) {
+BrowserFs.prototype.unlinkSync = function (filename) {
 
   var dirname = path.dirname(filename),
     basename = path.basename(filename),
@@ -299,7 +299,7 @@ BrowserFS.prototype.unlinkSync = function (filename) {
 };
 
 
-BrowserFS.prototype.rmrfSync = function (pathname) {
+BrowserFs.prototype.rmrfSync = function (pathname) {
 
   var pathParts = this.parsePathParts(pathname),
     dirname = pathParts.pop(),
@@ -334,7 +334,7 @@ BrowserFS.prototype.rmrfSync = function (pathname) {
 
   options.encoding: null (default), 'utf8', 'utf16le', 'utf16be' 
 */
-BrowserFS.prototype.writeFileSync = function (filename, content, options) {
+BrowserFs.prototype.writeFileSync = function (filename, content, options) {
 
   var pathParts = this.parsePathParts(filename),
     basename = pathParts.pop(),
@@ -408,7 +408,7 @@ BrowserFS.prototype.writeFileSync = function (filename, content, options) {
   If data written withe writeFile() was instance of ArrayBuffer, readFile() will also return ArrayBuffer unless a string encoding option was set.
 
 */
-BrowserFS.prototype.readFileSync = function (filename, options) {
+BrowserFs.prototype.readFileSync = function (filename, options) {
 
   var pathParts = this.parsePathParts(filename),
     file = find(pathParts, this.root);
@@ -445,7 +445,7 @@ BrowserFS.prototype.readFileSync = function (filename, options) {
 };
 
 
-BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
+BrowserFs.prototype.renameSync = function (oldPathname, newPathname) {
 
   var oldPath = this.parsePathParts(oldPathname),
     oldNode = find(oldPath, this.root),
@@ -485,14 +485,14 @@ BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
 
 // async functions, one argument plus callback without err
 ['exists'].forEach(function (fn) {
-  BrowserFS.prototype[fn] = function (filename, callback) {
+  BrowserFs.prototype[fn] = function (filename, callback) {
     return callback(this[fn + "Sync"](filename));
   };
 });
 
 // async functions, one argument plus callback
 ['stat', 'readdir', 'mkdirp', 'mkdir', 'rmdir', 'rmrf', 'unlink'].forEach(function (fn) {
-  BrowserFS.prototype[fn] = function (filename, callback) {
+  BrowserFs.prototype[fn] = function (filename, callback) {
     var result;
     try {
       result = this[fn + "Sync"](filename);
@@ -505,7 +505,7 @@ BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
 
 // async functions, optional second argument plus callback
 ['readFile', 'access'].forEach(function (fn) {
-  BrowserFS.prototype[fn] = function (filename, optArg, callback) {
+  BrowserFs.prototype[fn] = function (filename, optArg, callback) {
     var result;
     if (!callback) {
       callback = optArg;
@@ -522,7 +522,7 @@ BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
 
 // async functions, required second argument plus callback
 ['rename'].forEach(function (fn) {
-  BrowserFS.prototype[fn] = function (arg1, arg2, callback) {
+  BrowserFs.prototype[fn] = function (arg1, arg2, callback) {
     var result;
     try {
       result = this[fn + "Sync"](arg1, arg2);
@@ -535,7 +535,7 @@ BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
 
 // async functions, optional third argument plus callback
 ['writeFile'].forEach(function (fn) {
-  BrowserFS.prototype[fn] = function (arg1, arg2, optArg, callback) {
+  BrowserFs.prototype[fn] = function (arg1, arg2, optArg, callback) {
     var result;
     if (!callback) {
       callback = optArg;
@@ -550,7 +550,7 @@ BrowserFS.prototype.renameSync = function (oldPathname, newPathname) {
   };
 });
 
-module.exports = BrowserFS;
+module.exports = BrowserFs;
 },{"buffer":3,"path":6}],2:[function(require,module,exports){
 'use strict'
 

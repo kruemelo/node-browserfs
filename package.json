@@ -1,6 +1,6 @@
 {
   "name": "node-browserfs",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "a node fs-like browser in-memory file system ",
   "main": "browserfs.js",
   "repository": {
