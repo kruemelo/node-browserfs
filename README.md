@@ -1,4 +1,4 @@
-node-browserfs
+node-BrowserFs
 ==============
 
 a node fs-like browser in-memory file system. Synchronous & async versions available for all supported functions.
@@ -14,8 +14,8 @@ plus:
   * [join([path1], [path2], [...])](http://nodejs.org/api/path.html#path_path_join_path1_path2)
   * parsePathParts('/a/b/../c') -> ['a', 'c']
   * fileSizeSI / fileSizeIEC -> 34.30 kB / 33.50 KiB
-  * [BrowserFS.Buffer](https://nodejs.org/docs/latest-v5.x/api/buffer.html)
-  * [BrowserFS.path](https://nodejs.org/docs/latest-v5.x/api/path.html)
+  * [BrowserFs.Buffer](https://nodejs.org/docs/latest-v5.x/api/buffer.html)
+  * [BrowserFs.path](https://nodejs.org/docs/latest-v5.x/api/path.html)
 
 not supported:
   * watch, unwatch
@@ -32,8 +32,8 @@ not supported:
 Use
 ---
 ```
-var BrowserFS = requirejs('browserfs');
-var fs = new BrowserFS();
+var BrowserFs = requirejs('BrowserFs');
+var fs = new BrowserFs();
 
 fs.statSync('/');
 fs.mkdirSync('/subdir');
@@ -70,11 +70,11 @@ fs.access('/path/to/file', function (err) {
 
 // access to node path
 
-BrowserFS.path.join(''/a/b', '../c');  // '/a/c'
-BrowserFS.path.normalize('/a/b/..c');  // '/a/c'
+BrowserFs.path.join(''/a/b', '../c');  // '/a/c'
+BrowserFs.path.normalize('/a/b/..c');  // '/a/c'
 
 // access to node Buffer
-vart buf = BrowserFS.Buffer.from('tést', 'utf8'); 
+vart buf = BrowserFs.Buffer.from('tést', 'utf8'); 
 buf.toString('utf8'); // 'tést'
 
 ```
@@ -100,7 +100,7 @@ Prerequisites
 + `node -v` >= 5.12.0
 + `npm install browserify -g`
 
-run `npm run build` will produce browserified version of `lib/browserfs.js` in main folder `browserfs.js' and minify to 'browserfs.min.js'
+run `npm run build` will produce browserified version of `lib/BrowserFs.js` in main folder `BrowserFs.js' and minify to 'BrowserFs.min.js'
 
 
 License

@@ -5,7 +5,7 @@ var path = require('path');
 var assert = require('chai').assert;
 var util = require('util');
 
-var BrowserFS = require('../lib/browserfs.js');
+var BrowserFs = require('../lib/browserfs.js');
 
 function trueFn() { return true }
 function falseFn() { return false }
@@ -23,7 +23,7 @@ describe('browserfs', function () {
       done();
     }
 
-    browserfs = new BrowserFS(doneCallback);
+    browserfs = new BrowserFs(doneCallback);
 
     browserfs.statSync('/');
 
@@ -37,7 +37,7 @@ describe('browserfs', function () {
     const str = 'tést';
     const arrayBuffer = Uint8Array.from([1,2,4]).buffer;
     
-    var buf = BrowserFS.Buffer.from(str, 'utf8');
+    var buf = BrowserFs.Buffer.from(str, 'utf8');
 
     assert.instanceOf(buf, Buffer);
 
@@ -50,7 +50,7 @@ describe('browserfs', function () {
     // to base64
     assert.strictEqual(buf.toString('base64'), 'dMOpc3Q=');
 
-    buf = BrowserFS.Buffer.from(arrayBuffer);
+    buf = BrowserFs.Buffer.from(arrayBuffer);
 
     assert.deepEqual(buf.buffer, arrayBuffer);
 
@@ -65,7 +65,7 @@ describe('paths', function () {
 
   it('should parse paths to array', function (done) {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     [
       ['', []],
@@ -92,7 +92,7 @@ describe('stats', function () {
 
   it('should have stats for root node', function () {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       result = fs.statSync('/');
 
     assert.strictEqual(result.isFile(), false);
@@ -110,7 +110,7 @@ describe('stats', function () {
   it('should throw error for non existing files', function () {
       assert.throw(
         function () {
-          var fs = new BrowserFS();
+          var fs = new BrowserFs();
           fs.statSync('/unknown/path');
         },
         Error,
@@ -126,7 +126,7 @@ describe('exists', function () {
 
   it('should test for existing directory', function () {
 
-      var fs = new BrowserFS();
+      var fs = new BrowserFs();
 
       assert(fs.existsSync());
       assert(fs.existsSync(''));
@@ -150,7 +150,7 @@ describe('file nodes', function () {
 
   it('should have a function to get file nodes', function () {
     
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     
     assert.isFunction(fs.getNode, 'get node');
     assert.isObject(fs.getNode('/'), 'root node');
@@ -158,7 +158,7 @@ describe('file nodes', function () {
 
   it('should get directory nodes', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.mkdirpSync('/dirA/dirB');
 
@@ -173,7 +173,7 @@ describe('file nodes', function () {
 
   it('should get file nodes', function () {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       node;
 
     fs.writeFileSync('/file0', 'file0 content');
@@ -197,7 +197,7 @@ describe("directory", function () {
 
   it("should have a empty root directory as startup", function (done) {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     assert(fs.readdirSync('/'), []);
 
@@ -212,7 +212,7 @@ describe("directory", function () {
 
   it('should create a directory', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.mkdirSync('/subdir');
     assert.deepEqual(fs.readdirSync('/'), ['subdir']);
@@ -235,7 +235,7 @@ describe("directory", function () {
 
   it('should not recreate an existing directory', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.mkdirpSync('/dir/subdir');
     assert.deepEqual(fs.readdirSync('/dir'), ['subdir']);
@@ -247,7 +247,7 @@ describe("directory", function () {
 
   it('should create directories -p', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.mkdirpSync('/subdir/subdir2');
     assert.deepEqual(fs.readdirSync('/'), ['subdir']);
@@ -266,7 +266,7 @@ describe("directory", function () {
 
   it('should not remove a non-empty directory', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     fs.mkdirpSync('/subdir/subdir2');
 
     assert.throw(
@@ -281,7 +281,7 @@ describe("directory", function () {
 
   it('should remove a directory', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     fs.mkdirpSync('/subdir/subdir2');
     fs.rmdirSync('/subdir/subdir2');
     assert(!fs.existsSync('/subdir/subdir2'));
@@ -290,7 +290,7 @@ describe("directory", function () {
 
 
   it('should remove a non-empty directory', function () {
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     fs.mkdirpSync('/subdir/subdir2');
     fs.rmrfSync('/subdir');
     assert(!fs.existsSync('/subdir'));
@@ -305,7 +305,7 @@ describe("directory", function () {
 
   it('should rename a directory', function (done) {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       subdir1StatsBefore,
       subdir1_1Stats,
       subdir2StatsBefore;
@@ -346,13 +346,13 @@ describe("directory", function () {
 
   it('should access directory', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     
     fs.mkdirSync('access-dir', 'content');
 
     assert.throw(
       function () {
-        fs.accessSync('no-access-dir', BrowserFS.F_OK);
+        fs.accessSync('no-access-dir', BrowserFs.F_OK);
       },
       Error,
       'ENOENT'
@@ -378,7 +378,7 @@ describe('files', function () {
 
   it('should create a file', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     assert(!fs.existsSync('/file'));
     fs.writeFileSync('/file', '');
@@ -387,7 +387,7 @@ describe('files', function () {
 
 
   it('should write string to file', function () {
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.writeFileSync('/file', 'file string content');
     assert(fs.existsSync('/file'));
@@ -395,7 +395,7 @@ describe('files', function () {
 
 
   it('should write to file async', function (done) {
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.writeFile('/file-async', 'file string content', function (err) {
       assert(!err);
@@ -406,7 +406,7 @@ describe('files', function () {
 
 
   it('should write to file async with options', function (done) {
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.writeFile('/file-async-options', 'file string content', 'utf8', function (err) {
       assert(!err);
@@ -418,7 +418,7 @@ describe('files', function () {
 
   it('should read buffer from file by default', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     fs.writeFileSync('/file', 'file string content');
     assert.instanceOf(
       fs.readFileSync('/file'),
@@ -431,9 +431,9 @@ describe('files', function () {
 
   it('should read and write ArrayBuffer', function () {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       contentStr = 'file string còntént',
-      buffer = BrowserFS.Buffer.from(contentStr),
+      buffer = BrowserFs.Buffer.from(contentStr),
       arrayBuffer = new Int8Array(buffer).buffer;
 
     assert.strictEqual(buffer.length, 21);
@@ -467,7 +467,7 @@ describe('files', function () {
 
   it('should read string from file', function () {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.writeFileSync('/file', 'file string content');
     assert.equal(
@@ -486,7 +486,7 @@ describe('files', function () {
 
   it('should write buffer to file', function () {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       testStr = 'file string content',
       buffer = Buffer.from(testStr, 'utf8');
 
@@ -498,7 +498,7 @@ describe('files', function () {
 
   it('should rename a file', function (done) {
 
-    var fs = new BrowserFS(),
+    var fs = new BrowserFs(),
       testStr = 'file string content',
       oldStats, oldParentStats;
 
@@ -537,7 +537,7 @@ describe('files', function () {
 
   it('should delete a file', function () {
     
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
 
     fs.writeFileSync('file2unlink', 'file2unlink content');
     
@@ -551,13 +551,13 @@ describe('files', function () {
 
   it('should access file', function (done) {
 
-    var fs = new BrowserFS();
+    var fs = new BrowserFs();
     
     fs.writeFileSync('access-file', 'content');
 
     assert.throw(
       function () {
-        fs.accessSync('no-access-file', BrowserFS.F_OK);
+        fs.accessSync('no-access-file', BrowserFs.F_OK);
       },
       Error,
       'ENOENT'
