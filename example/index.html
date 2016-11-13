@@ -2,11 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <!--
-        "If you manually code a script tag in HTML to load a script with an anonymous define() call, this error can occur."
-        So make sure the only <script> tag (at least for any scripts which call define()) in your index.html is the one to requirejs.
-        -->
-        <script src="require.js"></script>
+        <script src="../browserfs.js"></script>
+        <script src="FileSaver/FileSaver.min.js"></script>
         <style type="text/css">
           #dropzone {
             height: 100px;
@@ -15,16 +12,18 @@
             border: 4px solid #ddd;
             font-style: italic;
             color: #ccc;
-        }
-        #fileList li{
-          cursor: pointer;
-          line-height: 27px;
-          font-size: 20px;
-        }
+          }
+          #fileList li{
+            cursor: pointer;
+            line-height: 27px;
+            font-size: 20px;
+          }
         </style>
         <script>
 
-        var fs, saveAs;
+
+        // create fs
+        fs = new BrowserFs();
 
         window.onload = function () {
           var dropzone = document.getElementById('dropzone');
@@ -82,18 +81,6 @@
             }
         }
 
-        requirejs.config({
-            "baseUrl": "./",
-            "paths": {
-            "browserfs": "../browserfs",
-            "saveAs": "./FileSaver/FileSaver.min"
-            }
-        });
-
-        require(['browserfs', 'saveAs'], function (browserfs, _saveAs) {
-          fs = new browserfs();
-          saveAs = _saveAs;
-        });
 
         </script>
     </head>

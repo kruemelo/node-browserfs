@@ -63,31 +63,7 @@ describe('browserfs', function () {
 
 describe('paths', function () {
 
-  it("should join paths", function () {
-
-    var fs = new BrowserFS();
-
-    [
-      [["/", "a/b/c"], "/a/b/c"],
-      [["/a", "b/ c"], "/a/b/c"],
-      [["/a/b", "c"], "/a/b/c"],
-      [["/a/", "b / c"], "/a/b/c"],
-      [["/a//", "b/c"], "/a/b/c"],
-      [["a", "b/c"], "a/b/c"],
-      [["a/b", "c"], "a/b/c"],
-      [["a/b", "./c"], "a/b/c"],
-      [["a/b", "../c"], "a/c"],
-      [["a/b", ". /c"], "a/b/c"],
-      [["a/b", " .. /c"], "a/c"]
-    ].forEach(function (test) {
-      var result = fs.joinPath.apply(fs, test[0]);
-      assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
-    });
-
-  });
-
-
-  it('should parse paths', function () {
+  it('should parse paths to array', function (done) {
 
     var fs = new BrowserFS();
 
@@ -101,86 +77,11 @@ describe('paths', function () {
       ['/a/../', []],
       ['/a/../..', []]
     ].forEach(function (test) {
-      var result = fs.parsePath(test[0]);
+      var result = fs.parsePathParts(test[0]);
       assert.deepEqual(result, test[1], util.format('result: "%s", expected: "%s"', result, test[1]));
     });
 
-  });
-
-  it('should normalize paths', function () {
-
-    var fs = new BrowserFS();
-
-    [
-      ['', '/'],
-      ['/', '/'],
-      ['/a', '/a'],
-      ['a', '/a'],
-      ['/a/', '/a'],
-      ['/a/b', '/a/b'],
-      ['/a/b/../c', '/a/c'],
-      ['/a/../', '/'],
-      ['/a/./', '/a'],
-      ['/a/../..', '/']
-    ].forEach(function (test) {
-      var result = fs.normalizePath(test[0]);
-      assert.strictEqual(result, test[1], util.format('test: "%s": ', test[0]));
-    });
-
-  });
-
-  it('should return the directory name of a path', function () {
-
-    var fs = new BrowserFS();
-
-    assert.isFunction(fs.dirname);
-
-    [
-      {path: '', dirname: '/'},
-      {path: '/', dirname: '/'},
-      {path: '/a', dirname: '/'},
-      {path: '/a/b', dirname: '/a'},
-      {path: '/a/b/', dirname: '/a'},
-      {path: '/a/b/c', dirname: '/a/b'},
-      {path: '/a/b/../c', dirname: '/a'},
-      {path: '/a/..', dirname: '/'},
-      {path: '/a/../..', dirname: '/'},
-      {path: 'a/b', dirname: '/a'},
-    ].forEach(function (test) {
-      assert.strictEqual(
-        fs.dirname(test.path),
-        test.dirname,
-        util.format('dirname for path: "%s"', test.path)
-      );
-    });
-
-  }); // dirname
-
-  it('should return the basename name of a path', function () {
-
-    var fs = new BrowserFS();
-
-    assert.isFunction(fs.basename);
-
-    [
-      {path: '', basename: ''},
-      {path: '/', basename: ''},
-      {path: '/a', basename: 'a'},
-      {path: '/a/b', basename: 'b'},
-      {path: '/a/b/', basename: 'b'},
-      {path: '/a/b/c', basename: 'c'},
-      {path: '/a/b/../c', basename: 'c'},
-      {path: '/a/..', basename: ''},
-      {path: '/a/../..', basename: ''},
-      {path: 'a/b', basename: 'b'},
-    ].forEach(function (test) {
-      assert.strictEqual(
-        fs.basename(test.path),
-        test.basename,
-        util.format('basename for path: "%s"', test.path)
-      );
-    });
-
+    done();
   });
 
 });
@@ -240,6 +141,7 @@ describe('exists', function () {
 
       assert(!fs.existsSync('/subdir/subdir2/not existing directory'));
   });
+
 
 });
 

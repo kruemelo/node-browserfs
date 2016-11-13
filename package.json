@@ -1,7 +1,7 @@
 {
   "name": "node-browserfs",
-  "version": "2.1.0",
-  "description": "AMD/CommonJS module providing a node fs-like browser in-memory file system ",
+  "version": "3.0.0",
+  "description": "a node fs-like browser in-memory file system ",
   "main": "browserfs.js",
   "repository": {
     "type": "git",
@@ -10,8 +10,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "minify": "^2.0.12",
-    "mocha": "^2.4.5",
-    "requirejs": "^2.2.0"
+    "mocha": "^2.4.5"
   },
   "keywords": [
     "node",
@@ -23,7 +22,7 @@
     "test": "mocha",
     "build": "npm test && npm run browserify && npm run minify",
     "browserify": "browserify ./lib/browserfs.js -s BrowserFs > ./browserfs.js",
-    "minify": "./node_modules/.bin/minify ./browserfs.js > ./browserfs.min.js"
+    "minify": "minify ./browserfs.js > ./browserfs.min.js"
   },
   "author": "kruemelo",
   "license": "WTFPL",
