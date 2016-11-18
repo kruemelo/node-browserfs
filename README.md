@@ -103,6 +103,18 @@ Prerequisites
 run `npm run build` will produce browserified version of `lib/BrowserFs.js` in main folder `BrowserFs.js' and minify to 'BrowserFs.min.js'
 
 
+Todo
+----
+
+- fs.truncate()
+- fs.appendFile()
+- fs.open(), fs.write(), fs.close()
+- fs.createReadStream()
+- fs.createWriteStream()
+- fs.watch(), fs.unwatch()
+- fs.utimes()
+
+
 License
 -------
 [WTFPL](http://www.wtfpl.net/)
